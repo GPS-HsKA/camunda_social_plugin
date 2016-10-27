@@ -1,8 +1,8 @@
-opitz-camunda-cockpit-plugin-bpmn-stats
-=======================================
+camunda-cockpit-social
 
-This is a simple [camunda](http://www.camunda.org) cockpit plugin that showcases how you can show some statistics on the process definition view.
+This is a camunda cockpit plugin to extend the platform wiht new social media features
 
-![Screenshot](screenshot2.png?raw=true "Screenshot")
+Release Notes:
 
-This plugin was created during learning camunda @ [![Opitz Consulting](OC-Logo.jpg?raw=true "Opitz Consulting")](http://www.opitz-consulting.com/), a consulting partner of [camunda](http://www.camunda.org).
+V1.0
+- initial commit
