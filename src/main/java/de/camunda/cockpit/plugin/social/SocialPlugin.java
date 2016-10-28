@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import org.camunda.bpm.cockpit.plugin.spi.impl.AbstractCockpitPlugin;
-
 import de.camunda.cockpit.plugin.social.resources.SocialRootResource;
 
 public class SocialPlugin extends AbstractCockpitPlugin {
@@ -16,7 +15,7 @@ public class SocialPlugin extends AbstractCockpitPlugin {
   private static final String[] MAPPING_FILES = {
 	    "org/camunda/social/cockpit/plugin/social-plugin/queries/social.xml"
 	  };
-  
+
   public String getId() {
     return ID;
   }
@@ -29,7 +28,7 @@ public class SocialPlugin extends AbstractCockpitPlugin {
 
     return classes;
   }
-  
+
   @Override
 	public List<String> getMappingFiles() {
 	  return Arrays.asList(MAPPING_FILES);

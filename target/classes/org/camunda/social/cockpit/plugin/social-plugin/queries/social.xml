@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cockpit.social">
+
+	<resultMap id="socialContainer"
+		type="de.camunda.cockpit.plugin.social.dto.SocialContainerDto">
+		<result property="id" column="ID" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="selectSocialForTaskActitvity" resultMap="socialContainer"
+		parameterType="String">
+		SELECT ACT_ID_ ID
+		FROM ACT_HI_ACTINST where enD_TIME_ is not null and PROC_DEF_ID_ =
+		#{parameter}
+	</select>
+
+	<select id="selectSocialForProcessInstances" resultMap="socialContainer"
+		parameterType="String">
+		SELECT PROC_DEF_ID_ ID
+		FROM ACT_HI_PROCINST where enD_TIME_ is not null
+	</select>
+
+</mapper>
