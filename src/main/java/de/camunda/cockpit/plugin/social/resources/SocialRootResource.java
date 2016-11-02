@@ -5,6 +5,8 @@ import javax.ws.rs.PathParam;
 
 import de.camunda.cockpit.plugin.social.SocialPlugin;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginRootResource;
+import org.camunda.bpm.engine.ProcessEngine;
+import org.camunda.bpm.engine.rest.sub.runtime.ProcessInstanceResource;
 
 /**
  * root resource to select sub resource for the selected engine (as you could run multiple engines)
@@ -21,7 +23,8 @@ public class SocialRootResource extends AbstractCockpitPluginRootResource {
 
   @Path("{engineName}/")
   public SocialEngineSpecificResource getProcessInstanceResource(@PathParam("engineName") String engineName) {
-    SocialEngineSpecificResource SocialEngineSpecificResource = new SocialEngineSpecificResource(engineName);
-	return subResource(SocialEngineSpecificResource, engineName);
+    SocialEngineSpecificResource socialEngineSpecificResource = new SocialEngineSpecificResource(engineName);
+    return subResource(socialEngineSpecificResource, engineName);
   }
+
 }

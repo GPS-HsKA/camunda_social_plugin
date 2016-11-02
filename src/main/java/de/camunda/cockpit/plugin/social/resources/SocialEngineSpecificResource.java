@@ -19,11 +19,24 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	}
 
 	@GET
-	@Path("process-definition/{id}/social")
+	@Path("process-definition/{id}/taskstats")
+	public List<SocialContainerDto> getTaskActititySocial(
+			@PathParam("id") String processDefinitionId) {
+
+		QueryParameters<SocialContainerDto> parameter = new QueryParameters<SocialContainerDto>();
+		parameter.setParameter(processDefinitionId);
+		return getQueryService().executeQuery(
+				"cockpit.plugin.social-plugin.selectSocialForTaskActitvity",
+				parameter);
+
+	}
+
+	@GET
+	@Path("process-definition/{id}/stats")
 	public SocialContainerDto getProcessInstanceSocial(
 			@PathParam("id") String processDefinitionId) {
 		return getQueryService().executeQuery(
-				"cockpit.social.selectSocialForProcessInstances",
+				"cockpit.plugin.social-plugin.selectSocialForProcessInstances",
 				processDefinitionId, SocialContainerDto.class);
 	}
 

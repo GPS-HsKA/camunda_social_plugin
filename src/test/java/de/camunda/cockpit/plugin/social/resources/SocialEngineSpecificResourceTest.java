@@ -14,6 +14,7 @@ import org.camunda.bpm.engine.task.Task;
 import org.camunda.bpm.engine.test.Deployment;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
@@ -46,17 +47,6 @@ public class SocialEngineSpecificResourceTest extends AbstractCockpitPluginTest 
 	public void testGetProcessInstanceSocial() {
 		SocialContainerDto processInstanceSocial = socialEngineSpecificResource.getProcessInstanceSocial("processDefinitionId");
 		Assert.assertNull(processInstanceSocial);
-	}
-
-
-	private String startAndCompleteProcesses() {
-		ProcessInstance startProcessInstanceByKey = runtimeService.startProcessInstanceByKey("simpleUserTaskProcess");		
-		runtimeService.startProcessInstanceByKey("simpleUserTaskProcess");
-		List<Task> list = taskService.createTaskQuery().list();
-		for (Task task : list) {
-			taskService.complete(task.getId());			
-		}
-		return startProcessInstanceByKey.getProcessDefinitionId();
 	}
 	
 }
