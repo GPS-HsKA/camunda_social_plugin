@@ -6,5 +6,9 @@
             <th>Social Tags</th>
         </tr>
         </thead>
+        <tbody>
+            <tr data-ng-repeat="processInstance in processInstances">
+                <td>{{processInstance.tag}}</td>
+        </tbody>
     </table>
 </div>

@@ -2,9 +2,9 @@ define(['angular'], function(angular) {
 
   var DashboardController = ["$scope", "$http", "Uri", function($scope, $http, Uri) {
 
-    $http.get(Uri.appUri("plugin://social/:engine/process-instance"))
+    $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.key + "/tags"))
         .success(function(data) {
-          $scope.processInstanceCounts = data;
+          $scope.processInstances = data;
         });
   }];
 

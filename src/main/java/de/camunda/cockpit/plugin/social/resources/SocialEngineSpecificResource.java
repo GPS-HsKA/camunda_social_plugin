@@ -1,5 +1,7 @@
 package de.camunda.cockpit.plugin.social.resources;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -10,6 +12,8 @@ import org.camunda.bpm.cockpit.db.QueryParameters;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.engine.runtime.VariableInstance;
 
 public class SocialEngineSpecificResource extends AbstractCockpitPluginResource {
 
@@ -19,25 +23,29 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	}
 
 	@GET
-	@Path("process-definition/{id}/taskstats")
-	public List<SocialContainerDto> getTaskActititySocial(
-			@PathParam("id") String processDefinitionId) {
+	@Path("{process-definition-key}/tags")
+	public SocialContainerDto[] getProcessInstance(
+			@PathParam("process-definition-key") String processDefinitionKey) {
 
-		QueryParameters<SocialContainerDto> parameter = new QueryParameters<SocialContainerDto>();
-		parameter.setParameter(processDefinitionId);
-		return getQueryService().executeQuery(
-				"cockpit.plugin.social-plugin.selectSocialForTaskActitvity",
-				parameter);
+		List<ProcessInstance> processInstances = getProcessEngine().getRuntimeService().createProcessInstanceQuery().processDefinitionKey(processDefinitionKey).list();
+		if (processInstances.size() == 0) {
+			return new SocialContainerDto[]{};
+		}
 
+		List<String> processInstanceIds = new ArrayList<String>(processInstances.size());
+		for (ProcessInstance processInstance : processInstances ) {
+			processInstanceIds.add(processInstance.getId());
+		}
+
+		List<VariableInstance> variableInstances = getProcessEngine().getRuntimeService().createVariableInstanceQuery().processInstanceIdIn(processInstanceIds.toArray(new String[processInstanceIds.size()])).list();
+		List<SocialContainerDto> dtos = new ArrayList<SocialContainerDto>();
+
+		for (VariableInstance variableInstance : variableInstances) {
+			SocialContainerDto dto = new SocialContainerDto();
+			dto.setTag(variableInstance.getName());
+			dtos.add(dto);
+		}
+
+		return  dtos.toArray(new SocialContainerDto[dtos.size()]);
 	}
-
-	@GET
-	@Path("process-definition/{id}/stats")
-	public SocialContainerDto getProcessInstanceSocial(
-			@PathParam("id") String processDefinitionId) {
-		return getQueryService().executeQuery(
-				"cockpit.plugin.social-plugin.selectSocialForProcessInstances",
-				processDefinitionId, SocialContainerDto.class);
-	}
-
 }
