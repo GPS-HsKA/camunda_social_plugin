@@ -34,4 +34,6 @@ public class SocialPlugin extends AbstractCockpitPlugin {
 	  return Arrays.asList(MAPPING_FILES);
 	}
 
+
+
 }

@@ -1,14 +1,37 @@
-<div>
-    <h1>Camunda Social-BPM Integration</h1>
-    <table class="table table-bordered table-hover table-condensed">
-        <thead>
-        <tr>
-            <th>Social Tags</th>
-        </tr>
-        </thead>
-        <tbody>
-            <tr data-ng-repeat="processInstance in processInstances">
-                <td>{{processInstance.tag}}</td>
-        </tbody>
-    </table>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Bootstrap 3, from LayoutIt!</title>
+
+    <meta name="description" content="Source code generated using layoutit.com">
+    <meta name="author" content="LayoutIt!">
+
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+<div class="container-fluid">
+    <h1>Social Dashboard</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <h4>Tag-Cloud</h4>
+            <div ng-repeat="tag in tags">
+                {{tag.tag}}
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h4>Microblog</h4>
+            <blockquote>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.
+                </p> <small>Someone famous <cite>Source Title</cite></small>
+            </blockquote>
+        </div>
+    </div>
 </div>
+</body>
+</html>

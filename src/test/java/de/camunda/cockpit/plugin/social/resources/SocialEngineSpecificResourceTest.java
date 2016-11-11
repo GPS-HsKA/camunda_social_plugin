@@ -40,13 +40,4 @@ public class SocialEngineSpecificResourceTest extends AbstractCockpitPluginTest 
 	    taskService = processEngine.getTaskService();
 		historyService = processEngine.getHistoryService();
 	}
-
-	@Deployment(resources = "processes/simple-user-task-process.bpmn")
-
-	@Test
-	public void testGetProcessInstanceSocial() {
-		SocialContainerDto processInstanceSocial = socialEngineSpecificResource.getProcessInstanceSocial("processDefinitionId");
-		Assert.assertNull(processInstanceSocial);
-	}
-	
 }

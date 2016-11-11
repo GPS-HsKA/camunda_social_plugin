@@ -2,23 +2,23 @@ package de.camunda.cockpit.plugin.social.dto;
 
 public class SocialContainerDto {
 
-	private String id;
-	private String tag;
+	private Integer id;
+	private String name;
 
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(String id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 
 	public String getTag() {
-		return tag;
+		return name;
 	}
 
-	public void setTag(String tag) {
-		this.tag = tag;
+	public void setTag(String name) {
+		this.name = name;
 	}
 
 	

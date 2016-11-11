@@ -9,17 +9,11 @@
 		<result property="id" column="ID" jdbcType="VARCHAR" />
 	</resultMap>
 
-	<select id="selectSocialForTaskActitvity" resultMap="socialContainer"
+	<select id="selectTag" resultMap="socialContainer"
 		parameterType="String">
 		SELECT ACT_ID_ ID
 		FROM ACT_HI_ACTINST where enD_TIME_ is not null and PROC_DEF_ID_ =
 		#{parameter}
-	</select>
-
-	<select id="selectSocialForProcessInstances" resultMap="socialContainer"
-		parameterType="String">
-		SELECT PROC_DEF_ID_ ID
-		FROM ACT_HI_PROCINST where enD_TIME_ is not null
 	</select>
 
 </mapper>
