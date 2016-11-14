@@ -1,14 +1,37 @@
 define(['angular'], function(angular) {
 
+  // *************************************************************** TabController ************************************************************
+
   var TabController = ["$scope", "$http", "Uri", function($scope, $http, Uri) {
 
-    $http.get(Uri.appUri("plugin://social/:engine/process-definition/" + $scope.processDefinition.id + "/tags"))
-        .success(function(data) {
-          $scope.processTag = data;
-          console.log($scope.processTag);
-        });
+    //*******************************************
+    //Tags für eine Process-Defintion-ID auslesen
+    //*******************************************
+    function getTag() {
+      $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags"))
+          .success(function (data) {
+            $scope.processTags = data;
+            console.log($scope.processTags);
+          });
+    }
+
+    //*****************************************
+    //Tag für eine Process-Defintion-ID anlegen
+    //*****************************************
+    $scope.setTag = function(tag) {
+      $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/"+tag.name))
+          .success(function () {
+              alert("Tag angelegt!" + "  " + "ProcessId: " + $scope.processDefinition.id +  "  " + "Tagname: " + tag.name);
+          })
+          .error(function (data, status, header, config) {
+          });
+    }
+
+    getTag();
 
   }];
+
+  // *************************************************************** DashboardController ************************************************************
 
   var DashboardController = ["$scope", "$http", "Uri", function($scope, $http, Uri) {
 
@@ -21,10 +44,13 @@ define(['angular'], function(angular) {
           .success(function(data) {
             $scope.tags = data;
             console.log($scope.tags);
+          })
+          .error(function (data, status, header, config) {
           });
     }
 
     getAllTags();
+
 
   }];
 

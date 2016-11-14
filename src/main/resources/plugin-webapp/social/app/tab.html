@@ -16,33 +16,27 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4">
-            <h4>Tags</h4>
-            <ul class="nav nav-pills">
-                <li class="active">
-                    <a href="#"> <span class="badge pull-right">1</span>{{processTag}}</a>
-                </li>
-                <li>
-                    <a href="#"> <span class="badge pull-right">1</span>aa</a>
-                </li>
-            </ul>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    Tags for Process
+                    <span ng-repeat="tag in processTags"><span class="label label-primary">{{tag.tagName}}</span></span>
+                </div>
+                <div class="panel-body">
+                    <p>You can define new tags for this process by using the input-field on the middle of this page</p>
+                </div>
+                <div class="panel-footer">
+                    Users worked on this process
+                    <span ng-repeat="tag in processTags"><span class="label label-primary">{{tag.user}}</span></span>
+                </div>
+            </div>
         </div>
         <div class="col-md-4">
             <h4>Generate new Tag</h4>
-            <form role="form">
+            <form class="form-inline">
                 <div class="form-group">
-                    <label for="InputTag">
-                        Tag
-                    </label>
-                    <input type="text" class="form-control" id="InputTag">
+                    <input type="text" class="form-control" ng-model="tag.name" id="InputName" placeholder="Tagname">
                 </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox"> New Version
-                    </label>
-                </div>
-                <button type="submit" class="btn btn-success">
-                    Submit
-                </button>
+                <button type="submit" ng-click="setTag(tag)" class="btn btn-primary">Generate</button>
             </form>
         </div>
         <div class="col-md-4">
