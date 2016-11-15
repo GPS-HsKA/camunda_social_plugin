@@ -2,12 +2,16 @@ define(['angular'], function(angular) {
 
   // *************************************************************** TabController ************************************************************
 
-  var TabController = ["$scope", "$http", "Uri", function($scope, $http, Uri) {
+  var TabController = ["$scope", "$http", "$filter", "Uri", "Notifications", function($scope, $http, $filter, Uri, Notifications) {
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //GET
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //*******************************************
     //Tags für eine Process-Defintion-ID auslesen
     //*******************************************
-    function getTag() {
+    function getTags() {
       $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags"))
           .success(function (data) {
             $scope.processTags = data;
@@ -15,25 +19,76 @@ define(['angular'], function(angular) {
           });
     }
 
+    //************************************************
+    //Blogposts für eine Process-Defintion-ID auslesen
+    //************************************************
+    function getPosts() {
+        $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog"))
+            .success(function (data) {
+                $scope.processPosts = data;
+                console.log($scope.processPosts);
+            });
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //POST
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     //*****************************************
     //Tag für eine Process-Defintion-ID anlegen
     //*****************************************
     $scope.setTag = function(tag) {
-      $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/"+tag.name))
-          .success(function () {
-              alert("Tag angelegt!" + "  " + "ProcessId: " + $scope.processDefinition.id +  "  " + "Tagname: " + tag.name);
-          })
-          .error(function (data, status, header, config) {
-          });
+        $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/"+tag.name))
+            .success(function () {
+                getTags();
+
+                var status = '# Tag created #';
+                var message = tag.name + ' added to process!';
+
+                Notifications.addMessage({
+                    status: status,
+                    message: message,
+                    http: true,
+                    exclusive: [ 'http' ],
+                    duration: 10000
+                });
+            })
+            .error(function (data, status, header, config) {
+            });
     }
 
-    getTag();
+    //*****************************************
+    //Blogpost anlegen
+    //*****************************************
+    $scope.setPost = function(post) {
+        $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog/" +post.caption+ "/" +post.name))
+            .success(function () {
+                getPosts();
+
+                var status = '# Post created #';
+                var message = post.caption + ' added to process!';
+
+                Notifications.addMessage({
+                    status: status,
+                    message: message,
+                    http: true,
+                    exclusive: [ 'http' ],
+                    duration: 10000
+                });
+            })
+            .error(function (data, status, header, config) {
+            });
+    }
+
+    getTags();
+    getPosts();
 
   }];
 
   // *************************************************************** DashboardController ************************************************************
 
-  var DashboardController = ["$scope", "$http", "Uri", function($scope, $http, Uri) {
+  var DashboardController = ["$scope", "$http", "$filter", "Uri", function($scope, $http, $filter, Uri) {
 
     //********************************
     //Funktion um alle Tags auszulesen
@@ -49,8 +104,22 @@ define(['angular'], function(angular) {
           });
     }
 
-    getAllTags();
+      //********************************
+      //Funktion um alle Posts auszulesen
+      //********************************
 
+      function getAllPosts() {
+          $http.get(Uri.appUri("plugin://social/:engine/blog"))
+              .success(function(data) {
+                  $scope.posts = data;
+                  console.log($scope.posts);
+              })
+              .error(function (data, status, header, config) {
+              });
+      }
+
+      getAllTags();
+      getAllPosts();
 
   }];
 
@@ -58,7 +127,7 @@ define(['angular'], function(angular) {
 
     ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.tab', {
       id: 'process-definitions',
-      label: 'Social Prozesse',
+      label: 'Social Pool',
       url: 'plugin://social/static/app/tab.html',
       controller: TabController,
 
@@ -68,7 +137,7 @@ define(['angular'], function(angular) {
 
     ViewsProvider.registerDefaultView('cockpit.dashboard', {
       id: 'process-definitions',
-      label: 'Social Prozesse',
+      label: 'Social Pool',
       url: 'plugin://social/static/app/dashboard.html',
       controller: DashboardController,
 

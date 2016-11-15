@@ -5,8 +5,13 @@ import java.sql.*;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
+import org.joda.time.LocalDateTime;
+
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 
 public class SocialEngineSpecificResource extends AbstractCockpitPluginResource {
@@ -43,6 +48,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			System.out.println("Creating database...");
 			stmt = conn.createStatement();
 			String sql = "CREATE TABLE TAG(ID bigint auto_increment PRIMARY KEY, NAME VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255))";
+			String sql1 = "CREATE TABLE BLOG(ID bigint auto_increment PRIMARY KEY, CAPTION VARCHAR(255), POST VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255), TIME DATE)";
 			stmt.execute(sql);
 			System.out.println("Database created successfully...");
 		} catch (SQLException se) {
@@ -77,7 +83,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 		try {
 			getDatabaseConnection();
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM TAG WHERE PROC_DEF='"+processDefinitionId+"'";
+			String sql = "SELECT DISTINCT * FROM TAG WHERE PROC_DEF='"+processDefinitionId+"'";
 			ResultSet rs = stmt.executeQuery(sql);
 			int g = 0;
 
@@ -87,6 +93,43 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 				dto.setId(rs.getInt("ID"));
 				dto.setTagName(rs.getString("NAME"));
 				dto.setUser(rs.getString("USER"));
+
+				dtos.add(dto);
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return dtos;
+	}
+
+	//***********************************************************************************************************************
+	// BlogPost zu ProzessDefiniton auslesen
+	//***********************************************************************************************************************
+
+	@GET
+	@Produces("application/json")
+	@Path("/{process-definition-id}/blog")
+	public ArrayList<SocialContainerDto> getPostsFromProcessId(@PathParam("process-definition-id") String processDefinitionId) throws SQLException, ClassNotFoundException {
+		ArrayList<SocialContainerDto> dtos = new ArrayList<SocialContainerDto>();
+		try {
+			getDatabaseConnection();
+			stmt = conn.createStatement();
+			String sql = "SELECT * FROM BLOG WHERE PROC_DEF='"+processDefinitionId+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			int g = 0;
+
+			while (rs.next()) {
+
+				SocialContainerDto dto = new SocialContainerDto();
+				dto.setId(rs.getInt("ID"));
+				dto.setCaption(rs.getString("CAPTION"));
+				dto.setTagName(rs.getString("POST"));
+				dto.setUser(rs.getString("USER"));
+				dto.setTime(rs.getDate("TIME"));
 
 				dtos.add(dto);
 			}
@@ -112,7 +155,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 		try {
 			getDatabaseConnection();
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM TAG";
+			String sql = "SELECT DISTINCT * FROM TAG";
 			ResultSet rs = stmt.executeQuery(sql);
 			int g = 0;
 
@@ -123,6 +166,44 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 				dto.setTagName(rs.getString("NAME"));
 				dto.setDefId(rs.getString("PROC_DEF"));
 				dto.setUser(rs.getString("USER"));
+
+				dtos.add(dto);
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return dtos;
+	}
+
+	//***********************************************************************************************************************
+	// Alle Blogeinträge auslesen
+	//***********************************************************************************************************************
+
+	@GET
+	@Produces("application/json")
+	@Path("/blog")
+	public ArrayList<SocialContainerDto> getAllPosts() throws SQLException, ClassNotFoundException {
+		ArrayList<SocialContainerDto> dtos = new ArrayList<SocialContainerDto>();
+		try {
+			getDatabaseConnection();
+			stmt = conn.createStatement();
+			String sql = "SELECT * FROM BLOG ORDER BY TIME";
+			ResultSet rs = stmt.executeQuery(sql);
+			int g = 0;
+
+			while (rs.next()) {
+
+				SocialContainerDto dto = new SocialContainerDto();
+				dto.setId(rs.getInt("ID"));
+				dto.setCaption(rs.getString("CAPTION"));
+				dto.setPost(rs.getString("POST"));
+				dto.setDefId(rs.getString("PROC_DEF"));
+				dto.setUser(rs.getString("USER"));
+				dto.setTime(rs.getDate("TIME"));
 
 				dtos.add(dto);
 			}
@@ -169,6 +250,31 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			String user = getUserId();
 			stmt = conn.createStatement();
 			String sql = "INSERT INTO TAG VALUES(default,'"+tagName+"', '"+processDefinitionId+"','"+user+"')";
+			stmt.executeUpdate(sql);
+			int g = 0;
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		System.out.println("########## Tag angelegt #########");
+	}
+
+	//***********************************************************************************************************************
+	// BlogPost für Prozessdefiniton erstellen
+	//***********************************************************************************************************************
+
+	@POST
+	@Consumes("application/json")
+	@Path("{process-definition-id}/blog/{caption}/{post}")
+	public void setProcessDefinitionPost(@PathParam("process-definition-id") String processDefinitionId,
+										 @PathParam("caption") String caption,
+										 @PathParam("post") String post){
+		try {
+			getDatabaseConnection();
+			String user = getUserId();
+			stmt = conn.createStatement();
+			String sql = "INSERT INTO BLOG VALUES(default,'"+post+"', '"+processDefinitionId+"','"+user+"',CURRENT_TIMESTAMP(),'"+caption+"')";
 			stmt.executeUpdate(sql);
 			int g = 0;
 			stmt.close();
