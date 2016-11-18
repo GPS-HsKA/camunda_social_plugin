@@ -5,25 +5,18 @@ import java.sql.*;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
-import org.joda.time.LocalDateTime;
 
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-
 
 public class SocialEngineSpecificResource extends AbstractCockpitPluginResource {
-
-	public static final String SOCIAL_TAG = "social.tag";
 
 	public SocialEngineSpecificResource(String engineName) {
 		super(engineName);
 	}
 
 	static final String JDBC_DRIVER = "org.h2.Driver";
-	static final String DB_URL = "jdbc:h2:./camundasocial;MV_STORE=FALSE;MVCC=FALSE;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO";
+	static final String DB_URL = "jdbc:h2:./camunda-h2-dbs/camundasocial;MV_STORE=FALSE;MVCC=FALSE;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO";
 
 	//  Database credentials
 	static final String USER = "sa";
@@ -47,9 +40,10 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			getDatabaseConnection();
 			System.out.println("Creating database...");
 			stmt = conn.createStatement();
-			String sql = "CREATE TABLE TAG(ID bigint auto_increment PRIMARY KEY, NAME VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255))";
-			String sql1 = "CREATE TABLE BLOG(ID bigint auto_increment PRIMARY KEY, CAPTION VARCHAR(255), POST VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255), TIME DATE)";
+			String sql = "CREATE TABLE TAG (ID bigint auto_increment PRIMARY KEY, NAME VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255))";
+			String sql1 = "CREATE TABLE BLOG (ID bigint auto_increment PRIMARY KEY, CAPTION VARCHAR(255), POST VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255), TIME DATE)";
 			stmt.execute(sql);
+			stmt.execute(sql1);
 			System.out.println("Database created successfully...");
 		} catch (SQLException se) {
 			se.printStackTrace();
@@ -83,15 +77,46 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 		try {
 			getDatabaseConnection();
 			stmt = conn.createStatement();
-			String sql = "SELECT DISTINCT * FROM TAG WHERE PROC_DEF='"+processDefinitionId+"'";
+			String sql = "SELECT DISTINCT NAME FROM TAG WHERE PROC_DEF='"+processDefinitionId+"'";
 			ResultSet rs = stmt.executeQuery(sql);
 			int g = 0;
 
 			while (rs.next()) {
 
 				SocialContainerDto dto = new SocialContainerDto();
-				dto.setId(rs.getInt("ID"));
 				dto.setTagName(rs.getString("NAME"));
+
+				dtos.add(dto);
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return dtos;
+	}
+
+	//***********************************************************************************************************************
+	// User zu ProzessDefiniton auslesen
+	//***********************************************************************************************************************
+
+	@GET
+	@Produces("application/json")
+	@Path("/{process-definition-id}/users")
+	public ArrayList<SocialContainerDto> getUsersFromProcessId(@PathParam("process-definition-id") String processDefinitionId) throws SQLException, ClassNotFoundException {
+		ArrayList<SocialContainerDto> dtos = new ArrayList<SocialContainerDto>();
+		try {
+			getDatabaseConnection();
+			stmt = conn.createStatement();
+			String sql = "SELECT DISTINCT USER FROM TAG WHERE PROC_DEF='"+processDefinitionId+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			int g = 0;
+
+			while (rs.next()) {
+
+				SocialContainerDto dto = new SocialContainerDto();
 				dto.setUser(rs.getString("USER"));
 
 				dtos.add(dto);
@@ -155,16 +180,80 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 		try {
 			getDatabaseConnection();
 			stmt = conn.createStatement();
-			String sql = "SELECT DISTINCT * FROM TAG";
+			String sql = "SELECT DISTINCT NAME FROM TAG";
 			ResultSet rs = stmt.executeQuery(sql);
 			int g = 0;
 
 			while (rs.next()) {
 
 				SocialContainerDto dto = new SocialContainerDto();
-				dto.setId(rs.getInt("ID"));
+				dto.setTagName(rs.getString("NAME"));
+
+				dtos.add(dto);
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return dtos;
+	}
+
+	//***********************************************************************************************************************
+	// Alle Tags eines Users auslesen
+	//***********************************************************************************************************************
+
+	@GET
+	@Produces("application/json")
+	@Path("/tags/{user}")
+	public ArrayList<SocialContainerDto> getAllTagsFromUser(@PathParam("user") String user) throws SQLException, ClassNotFoundException {
+		ArrayList<SocialContainerDto> dtos = new ArrayList<SocialContainerDto>();
+		try {
+			getDatabaseConnection();
+			stmt = conn.createStatement();
+			String sql = "SELECT NAME, PROC_DEF FROM TAG WHERE USER='"+user+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+			int g = 0;
+
+			while (rs.next()) {
+
+				SocialContainerDto dto = new SocialContainerDto();
 				dto.setTagName(rs.getString("NAME"));
 				dto.setDefId(rs.getString("PROC_DEF"));
+
+				dtos.add(dto);
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return dtos;
+	}
+
+	//***********************************************************************************************************************
+	// Alle User auslesen
+	//***********************************************************************************************************************
+
+	@GET
+	@Produces("application/json")
+	@Path("/users")
+	public ArrayList<SocialContainerDto> getAllUsers() throws SQLException, ClassNotFoundException {
+		ArrayList<SocialContainerDto> dtos = new ArrayList<SocialContainerDto>();
+		try {
+			getDatabaseConnection();
+			stmt = conn.createStatement();
+			String sql = "SELECT DISTINCT USER FROM TAG";
+			ResultSet rs = stmt.executeQuery(sql);
+			int g = 0;
+
+			while (rs.next()) {
+
+				SocialContainerDto dto = new SocialContainerDto();
 				dto.setUser(rs.getString("USER"));
 
 				dtos.add(dto);
@@ -274,7 +363,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			getDatabaseConnection();
 			String user = getUserId();
 			stmt = conn.createStatement();
-			String sql = "INSERT INTO BLOG VALUES(default,'"+post+"', '"+processDefinitionId+"','"+user+"',CURRENT_TIMESTAMP(),'"+caption+"')";
+			String sql = "INSERT INTO BLOG VALUES(default, '"+caption+"', '"+post+"', '"+processDefinitionId+"','"+user+"',CURRENT_TIMESTAMP())";
 			stmt.executeUpdate(sql);
 			int g = 0;
 			stmt.close();

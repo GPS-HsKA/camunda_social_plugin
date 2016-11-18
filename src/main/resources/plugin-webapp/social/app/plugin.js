@@ -1,8 +1,50 @@
 define(['angular'], function(angular) {
 
-  // *************************************************************** TabController ************************************************************
+// ************************************************************************************************************************************************
+// *************************************************************** MODAL - Controller *************************************************************
+// ************************************************************************************************************************************************
 
-  var TabController = ["$scope", "$http", "$filter", "Uri", "Notifications", function($scope, $http, $filter, Uri, Notifications) {
+
+    var modalController = ["$scope", "$http", "Uri", "Notifications", "userName", function($scope, $http, Uri, Notifications, userName, $window) {
+
+        $scope.userName = userName;
+
+        //GET
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //********************************************
+        //Funktion um alle Tags eines Users auszulesen
+        //********************************************
+
+        function getAllTagsFromUser() {
+            $http.get(Uri.appUri("plugin://social/:engine/tags/" + userName))
+                .success(function (data) {
+                    $scope.dataSets = data;
+                    console.log($scope.dataSets);
+                })
+                .error(function (data, status, header, config) {
+                });
+        }
+
+        $scope.gotoProcess = function (processId) {
+            $window.open($('base').attr('cockpit-api') + 'plugin/social/static/app/modalUser.html')
+        }
+
+    //POST
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+    getAllTagsFromUser();
+
+    }];
+
+// ************************************************************************************************************************************************
+// *************************************************************** TAB - Controller ***************************************************************
+// ************************************************************************************************************************************************
+
+
+    var TabController = ["$scope", "$http", "Uri", "Notifications", function($scope, $http, Uri, Notifications) {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //GET
@@ -19,6 +61,17 @@ define(['angular'], function(angular) {
           });
     }
 
+    //*******************************************
+    //User für eine Process-Defintion-ID auslesen
+    //*******************************************
+    function getUsers() {
+        $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/users"))
+            .success(function (data) {
+                $scope.processUsers = data;
+                console.log($scope.processUsers);
+            });
+    }
+
     //************************************************
     //Blogposts für eine Process-Defintion-ID auslesen
     //************************************************
@@ -30,8 +83,6 @@ define(['angular'], function(angular) {
             });
     }
 
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //POST
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -42,6 +93,7 @@ define(['angular'], function(angular) {
         $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/"+tag.name))
             .success(function () {
                 getTags();
+                getUsers();
 
                 var status = '# Tag created #';
                 var message = tag.name + ' added to process!';
@@ -81,14 +133,21 @@ define(['angular'], function(angular) {
             });
     }
 
+    //************************************************************************************************
+    //Funktions Executions
+    //************************************************************************************************
+
+    getUsers();
     getTags();
     getPosts();
 
   }];
 
-  // *************************************************************** DashboardController ************************************************************
+// ************************************************************************************************************************************************
+// *************************************************************** DashboardController ************************************************************
+// ************************************************************************************************************************************************
 
-  var DashboardController = ["$scope", "$http", "$filter", "Uri", function($scope, $http, $filter, Uri) {
+  var DashboardController = ["$scope", "$http", "Uri", "$modal", function($scope, $http, Uri, $modal) {
 
     //********************************
     //Funktion um alle Tags auszulesen
@@ -104,22 +163,52 @@ define(['angular'], function(angular) {
           });
     }
 
-      //********************************
-      //Funktion um alle Posts auszulesen
-      //********************************
+    //********************************
+    //Funktion um alle User auszulesen
+    //********************************
 
-      function getAllPosts() {
-          $http.get(Uri.appUri("plugin://social/:engine/blog"))
-              .success(function(data) {
-                  $scope.posts = data;
-                  console.log($scope.posts);
-              })
-              .error(function (data, status, header, config) {
-              });
-      }
+    function getAllUsers() {
+        $http.get(Uri.appUri("plugin://social/:engine/users"))
+            .success(function(data) {
+                $scope.users = data;
+                console.log($scope.users);
+            })
+            .error(function (data, status, header, config) {
+            });
+    }
 
-      getAllTags();
-      getAllPosts();
+    //********************************
+    //Funktion um alle Posts auszulesen
+    //********************************
+
+    function getAllPosts() {
+        $http.get(Uri.appUri("plugin://social/:engine/blog"))
+            .success(function(data) {
+                $scope.posts = data;
+                console.log($scope.posts);
+            })
+            .error(function (data, status, header, config) {
+            });
+    }
+
+    getAllUsers();
+    getAllTags();
+    getAllPosts();
+
+
+   $scope.openUserModal = function(user) {
+       var modalInstance = $modal.open({
+           templateUrl: $('base').attr('cockpit-api') + 'plugin/social/static/app/modalUser.html',
+           controller: modalController,
+           scope: $scope,
+           size: 'lg',
+           resolve: {
+               userName: function () {
+                   return user;
+               }
+           }
+       });
+   };
 
   }];
 
@@ -146,7 +235,7 @@ define(['angular'], function(angular) {
     });
   }];
 
-  var ngModule = angular.module('cockpit.plugin.social', []);
+  var ngModule = angular.module('cockpit.plugin.social', ["ui.bootstrap"]);
 
   ngModule.config(Configuration);
 

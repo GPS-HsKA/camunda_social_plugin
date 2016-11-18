@@ -4,40 +4,48 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="stylesheet" href="plugin://social/static/app/css/style.css">
-    <link rel="stylesheet" href="plugin://social/static/app/css/jqcloud.min.css">
-
-    <script src="plugin://social/static/app/js/jqcloud.min.js"></script>
-
-
 </head>
 <body>
 <div class="container-fluid">
-    <h1>Social Dashboard</h1>
+    <div class="jumbotron">
+    <h3>Social Pool</h3>
     <div class="row">
         <div class="col-md-4">
-        <h4>Tag-Cloud</h4>
+        <h4 style="color: #3498db;">Tag-Cloud</h4>
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    Tags in processes
-                    <span ng-repeat="tag in tags"><span class="label label-primary">{{tag.tagName}}</span></span>
+                    <span ng-repeat="tag in tags">
+                        <span class="label label-default">{{tag.tagName}}</span><br>
+                    </span>
                 </div>
-                <div class="panel-heading">
-                    Users worked on processes
-                    <span ng-repeat="tag in tags"><span class="label label-primary">{{tag.user}}</span></span>
-                </div>
-        </div>
+            </div>
         </div>
         <div class="col-md-4">
-            <h4>Microblog</h4>
-            <blockquote>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante.
-                </p> <small>Someone famous <cite>Source Title</cite></small>
-            </blockquote>
+            <h4 style="color: #3498db;">Users in processes</h4>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <span ng-repeat="user in users">
+                            <a ng-click="openUserModal(user.user)" class="badge">{{user.user}}</a><br>
+                        </span>
+                    </div>
+                </div>
+        </div>
+        <div class="col-md-4">
+            <h4 style="color: #3498db;">Microblog</h4>
+            <div style="overflow: auto; height: 300px">
+            <ul class="list-unstyled">
+                <li ng-repeat="post in posts">
+                    <blockquote>
+                        <strong>{{post.caption}}</strong><br>
+                        {{post.post}}
+                        <cite class="clearfix">- {{post.user}} am {{post.time | date}}</cite>
+                    </blockquote>
+                </li>
+            </ul>
+            </div>
         </div>
     </div>
+ </div>
 </div>
 </body>
 </html>

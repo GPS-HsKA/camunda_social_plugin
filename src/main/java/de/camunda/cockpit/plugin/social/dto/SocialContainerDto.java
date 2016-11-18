@@ -11,6 +11,7 @@ public class SocialContainerDto {
     private String post;
     private Date time;
     private String caption;
+    private Integer userAmount;
 
 	public Integer getId() {
 		return id;
@@ -59,6 +60,13 @@ public class SocialContainerDto {
     }
     public void setCaption(String caption) {
         this.caption = caption;
+    }
+
+    public Integer getUserAmount() {
+        return userAmount;
+    }
+    public void setUserAmount(Integer userAmount) {
+        this.userAmount = userAmount;
     }
 
 }
