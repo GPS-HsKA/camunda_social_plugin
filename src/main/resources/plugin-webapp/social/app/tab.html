@@ -17,47 +17,46 @@
     <div class="row">
         <div class="col-md-4">
             <div class="panel panel-default">
-                <div class="panel-heading">
-                    Tags for Process
-                    <span ng-repeat="tag in processTags"><span class="label label-primary">{{tag.tagName}}</span></span>
-                </div>
-                <div class="panel-body">
-                    <p>You can define new tags for this process by using the input-field on the middle of this page</p>
-                </div>
-                <div class="panel-footer">
-                    Users worked on this process
-                    <span ng-repeat="user in processUsers"><span class="label label-primary">{{user.user}}</span></span>
-                </div>
+                <h4 style="color: #3498db;">Tags</h4>
+                    <span ng-repeat="tag in processTags">
+                        <span class="label label-default">{{tag.tagName}}</span></span>
+            </div>
+            <div class="panel panel-default">
+                <h4 style="color: #3498db;">Users in process</h4>
+                     <span ng-repeat="user in processUsers">
+                        <span class="label label-default">{{user.user}}</span></span>
             </div>
         </div>
         <div class="col-md-4">
-            <h4>>> new Tag</h4>
-            <form class="form-inline">
-                <div class="form-group">
-                    <input type="text" class="form-control" ng-model="tag.name" id="InputName" placeholder="Tagname">
-                </div>
-                <button type="submit" ng-click="setTag(tag)" class="btn btn-primary">Generate</button>
-            </form>
-            <h4>>> new blogpost</h4>
-            <form class="form">
-                <div class="form-group">
-                    <input type="text" class="form-control" ng-model="post.caption" id="InputCaption" placeholder="Caption">
-                    <textarea type="text" class="form-control" ng-model="post.name" id="InputPost" placeholder="Post"></textarea>
-                </div>
-                <button type="submit" ng-click="setPost(post)" class="btn btn-primary">Generate</button>
-            </form>
+                <h4>>> new Tag</h4>
+                <form class="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="tag.name" id="InputName" placeholder="Tagname">
+                    </div>
+                    <button type="submit" ng-click="setTag(tag)" class="btn btn-primary">Generate</button>
+                </form>
+                <h4>>> new blogpost</h4>
+                <form class="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" ng-model="post.caption" id="InputCaption" placeholder="Caption">
+                        <textarea type="text" class="form-control" ng-model="post.name" id="InputPost" placeholder="Post"></textarea>
+                    </div>
+                    <button type="submit" ng-click="setPost(post)" class="btn btn-primary">Generate</button>
+                </form>
         </div>
         <div class="col-md-4">
             <h4 style="color: #3498db;">Microblog for process</h4>
-            <ul class="list-unstyled">
-                <li ng-repeat="post in processPosts">
-                    <blockquote>
-                        <strong>{{post.caption}}</strong>
-                        {{post.tagName}}
-                        <cite class="clearfix">—>{{post.user}} am {{post.time | date}}</cite>
-                    </blockquote>
-                </li>
-            </ul>
+            <div style="overflow: auto; height: 300px">
+                <ul class="list-unstyled">
+                    <li ng-repeat="post in processPosts">
+                        <blockquote>
+                            <strong>{{post.caption}}</strong>
+                            {{post.tagName}}
+                            <cite class="clearfix"># {{post.user}} am {{post.time | date}}</cite>
+                        </blockquote>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 </div>

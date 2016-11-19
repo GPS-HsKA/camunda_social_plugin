@@ -5,7 +5,7 @@ define(['angular'], function(angular) {
 // ************************************************************************************************************************************************
 
 
-    var modalController = ["$scope", "$http", "Uri", "Notifications", "userName", function($scope, $http, Uri, Notifications, userName, $window) {
+    var modalController = ["$scope", "$http", "Uri", "Notifications", "userName", "$window", "$modalInstance", function($scope, $http, Uri, Notifications, userName, $window, $modalInstance) {
 
         $scope.userName = userName;
 
@@ -27,13 +27,13 @@ define(['angular'], function(angular) {
         }
 
         $scope.gotoProcess = function (processId) {
-            $window.open($('base').attr('cockpit-api') + 'plugin/social/static/app/modalUser.html')
+            $window.open($('base').attr('cockpit') + '/process-definition/' + processId);
         }
 
-    //POST
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+        $scope.closeUserModal = function () {
+            $modalInstance.close();
+        }
 
     getAllTagsFromUser();
 
