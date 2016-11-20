@@ -5,6 +5,14 @@ import java.sql.*;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
+import org.camunda.bpm.engine.impl.cmmn.model.CmmnActivity;
+import org.camunda.bpm.model.bpmn.Bpmn;
+import org.camunda.bpm.model.bpmn.BpmnModelInstance;
+import org.camunda.bpm.model.bpmn.instance.StartEvent;
+import org.camunda.bpm.model.bpmn.instance.camunda.CamundaExecutionListener;
+import org.camunda.bpm.model.cmmn.instance.ExtensionElements;
+import org.camunda.bpm.model.cmmn.instance.HumanTask;
+import org.camunda.bpm.model.cmmn.instance.PlanItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -25,6 +33,16 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	//Database Connection
 	static java.sql.Connection conn = null;
 	static Statement stmt = null;
+
+	//TODO Tags in XML als Extension Element
+	public void transformHumanTask(PlanItem planItem, HumanTask humanTask, CmmnActivity activity){
+		ExtensionElements extensionElements = humanTask.getExtensionElements();
+	}
+
+	/*BpmnModelInstance modelInstance = Bpmn.createEmptyModel();
+	StartEvent startEvent =
+	CamundaExecutionListener listener = extensionElements.*/
+
 
 	public void getDatabaseConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
@@ -143,7 +161,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 		try {
 			getDatabaseConnection();
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM BLOG WHERE PROC_DEF='"+processDefinitionId+"'";
+			String sql = "SELECT * FROM BLOG WHERE PROC_DEF='"+processDefinitionId+"' ORDER BY TIME DESC";
 			ResultSet rs = stmt.executeQuery(sql);
 			int g = 0;
 
@@ -280,7 +298,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 		try {
 			getDatabaseConnection();
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM BLOG ORDER BY TIME";
+			String sql = "SELECT * FROM BLOG ORDER BY TIME DESC";
 			ResultSet rs = stmt.executeQuery(sql);
 			int g = 0;
 
