@@ -6,19 +6,17 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                         <span ng-repeat="process in dataSets">
-                            <a ng-click="gotoProcess(process.defId)" class="label-info">{{process.defId}}</a><br>
-                        </span>
+                            <a ng-click="gotoProcess(process.defId)" class="badge">{{process.defId}}</a></span>
                 </div>
             </div>
             <h4 style="color: #3498db;">Tag interactions from {{userName}}</h4>
             <div class="panel panel-default">
                 <div class="panel-heading">
                         <span ng-repeat="process in dataSets">
-                            <a ng-click="#" class="label-info">{{process.tagName}}</a><br>
-                        </span>
+                            <a ng-click="#" class="badge">{{process.tagName}}</a></span>
                 </div>
             </div>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-warning" ng-click="closeUserModal()">Cancel</button>
+        <button class="btn btn-default" ng-click="closeUserModal()">Close</button>
     </div>

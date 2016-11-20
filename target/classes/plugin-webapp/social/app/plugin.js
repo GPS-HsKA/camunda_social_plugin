@@ -27,7 +27,8 @@ define(['angular'], function(angular) {
         }
 
         $scope.gotoProcess = function (processId) {
-            $window.open($('base').attr('cockpit') + '/process-definition/' + processId);
+            $window.open($('base').attr('href') + '#/process-definition/' + processId);
+            return false;
         }
 
 
@@ -94,6 +95,7 @@ define(['angular'], function(angular) {
             .success(function () {
                 getTags();
                 getUsers();
+                getPosts();
 
                 var status = '# Tag created #';
                 var message = tag.name + ' added to process!';
@@ -105,6 +107,7 @@ define(['angular'], function(angular) {
                     exclusive: [ 'http' ],
                     duration: 10000
                 });
+                $scope.tag.name = null;
             })
             .error(function (data, status, header, config) {
             });
@@ -117,6 +120,8 @@ define(['angular'], function(angular) {
         $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog/" +post.caption+ "/" +post.name))
             .success(function () {
                 getPosts();
+                getUsers();
+                getTags();
 
                 var status = '# Post created #';
                 var message = post.caption + ' added to process!';
@@ -128,6 +133,8 @@ define(['angular'], function(angular) {
                     exclusive: [ 'http' ],
                     duration: 10000
                 });
+                $scope.post.caption = null;
+                $scope.post.name = null;
             })
             .error(function (data, status, header, config) {
             });
@@ -147,7 +154,7 @@ define(['angular'], function(angular) {
 // *************************************************************** DashboardController ************************************************************
 // ************************************************************************************************************************************************
 
-  var DashboardController = ["$scope", "$http", "Uri", "$modal", function($scope, $http, Uri, $modal) {
+  var DashboardController = ["$scope", "$http", "Uri", "$modal", "$window", function($scope, $http, Uri, $modal, $window) {
 
     //********************************
     //Funktion um alle Tags auszulesen
@@ -209,6 +216,11 @@ define(['angular'], function(angular) {
            }
        });
    };
+
+   $scope.gotoProcess = function (processId) {
+       $window.open($('base').attr('href') + '#/process-definition/' + processId);
+       return false;
+   }
 
   }];
 

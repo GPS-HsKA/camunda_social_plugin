@@ -15,8 +15,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <span ng-repeat="tag in tags">
-                        <span class="label label-default">{{tag.tagName}}</span><br>
-                    </span>
+                        <span class="badge">{{tag.tagName}}</span></span>
                 </div>
             </div>
         </div>
@@ -25,8 +24,7 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <span ng-repeat="user in users">
-                            <a ng-click="openUserModal(user.user)" class="badge">{{user.user}}</a><br>
-                        </span>
+                            <a ng-click="openUserModal(user.user)" class="badge">{{user.user}}</a></span>
                     </div>
                 </div>
         </div>
@@ -36,9 +34,9 @@
             <ul class="list-unstyled">
                 <li ng-repeat="post in posts">
                     <blockquote>
-                        <strong style="color: #90a0dd;" ng-click="openUserModal(post.defId)">{{post.caption}}</strong><br>
+                        <strong style="color: #90a0dd;" ng-click="gotoProcess(post.defId)">{{post.caption}}</strong><br>
                         {{post.post}}
-                        <cite class="clearfix" ng-click="openUserModal(post.user)"># {{post.user}} am {{post.time | date}}</cite>
+                        <cite style="color: #90a0dd;" class="clearfix" ng-click="openUserModal(post.user)"># {{post.user}} am {{post.time | date}}</cite>
                     </blockquote>
                 </li>
             </ul>

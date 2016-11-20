@@ -16,26 +16,30 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-4">
+            <h4 style="color: #3498db;">Tags</h4>
             <div class="panel panel-default">
-                <h4 style="color: #3498db;">Tags</h4>
+                <div class="panel-heading">
                     <span ng-repeat="tag in processTags">
-                        <span class="label label-default">{{tag.tagName}}</span></span>
+                        <span class="badge">{{tag.tagName}}</span></span>
+                </div>
             </div>
+            <h4 style="color: #3498db;">Users in process</h4>
             <div class="panel panel-default">
-                <h4 style="color: #3498db;">Users in process</h4>
+                <div class="panel-heading">
                      <span ng-repeat="user in processUsers">
-                        <span class="label label-default">{{user.user}}</span></span>
+                        <span class="badge">{{user.user}}</span></span>
+                 </div>
             </div>
         </div>
         <div class="col-md-4">
-                <h4>>> new Tag</h4>
+                <h4 style="color: #3498db;">new Tag</h4>
                 <form class="form">
                     <div class="form-group">
                         <input type="text" class="form-control" ng-model="tag.name" id="InputName" placeholder="Tagname">
                     </div>
                     <button type="submit" ng-click="setTag(tag)" class="btn btn-primary">Generate</button>
                 </form>
-                <h4>>> new blogpost</h4>
+                <h4 style="color: #3498db;">new blogpost</h4>
                 <form class="form">
                     <div class="form-group">
                         <input type="text" class="form-control" ng-model="post.caption" id="InputCaption" placeholder="Caption">
@@ -50,9 +54,9 @@
                 <ul class="list-unstyled">
                     <li ng-repeat="post in processPosts">
                         <blockquote>
-                            <strong>{{post.caption}}</strong>
+                            <strong style="color: #90a0dd;">{{post.caption}}</strong><br>
                             {{post.tagName}}
-                            <cite class="clearfix"># {{post.user}} am {{post.time | date}}</cite>
+                            <cite style="color: #90a0dd;" class="clearfix"># {{post.user}} am {{post.time | date}}</cite>
                         </blockquote>
                     </li>
                 </ul>
