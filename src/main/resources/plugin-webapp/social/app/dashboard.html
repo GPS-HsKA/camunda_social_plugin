@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
 </head>
 <body>
 <div class="container-fluid">
     <div class="jumbotron">
-    <h3>Social Pool</h3>
+    <h3>Community Pool</h3>
     <div class="row">
         <div class="col-md-4">
         <h4 style="color: #3498db;">Tag-Cloud</h4>
@@ -36,7 +37,7 @@
                     <blockquote>
                         <strong style="color: #90a0dd;" ng-click="gotoProcess(post.defId)">{{post.caption}}</strong><br>
                         {{post.post}}
-                        <cite style="color: #90a0dd;" class="clearfix" ng-click="openUserModal(post.user)"># {{post.user}} am {{post.time | date}}</cite>
+                        <cite class="clearfix"># <span style="color: red;" ng-click="openUserModal(post.user)">{{post.user}}</span> am {{post.time | date}} in <span ng-click="gotoProcess(post.defId)" style="color: red;">{{post.defId | split:(':'):0}} Version: {{post.defId | split:(':'):1}}</span></cite>
                     </blockquote>
                 </li>
             </ul>

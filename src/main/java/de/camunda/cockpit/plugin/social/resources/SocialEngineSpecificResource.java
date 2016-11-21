@@ -5,17 +5,18 @@ import java.sql.*;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
+import org.camunda.bpm.engine.RepositoryService;
 import org.camunda.bpm.engine.impl.cmmn.model.CmmnActivity;
 import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
-import org.camunda.bpm.model.bpmn.instance.StartEvent;
-import org.camunda.bpm.model.bpmn.instance.camunda.CamundaExecutionListener;
+import org.camunda.bpm.model.bpmn.instance.ServiceTask;
 import org.camunda.bpm.model.cmmn.instance.ExtensionElements;
 import org.camunda.bpm.model.cmmn.instance.HumanTask;
 import org.camunda.bpm.model.cmmn.instance.PlanItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class SocialEngineSpecificResource extends AbstractCockpitPluginResource {
 
@@ -34,14 +35,26 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	static java.sql.Connection conn = null;
 	static Statement stmt = null;
 
+	//BPMN Modell
+	protected BpmnModelInstance modelInstance;
+
+
+	@GET
+	@Consumes("application/json")
+	@Path("/getXML")
 	//TODO Tags in XML als Extension Element
-	public void transformHumanTask(PlanItem planItem, HumanTask humanTask, CmmnActivity activity){
-		ExtensionElements extensionElements = humanTask.getExtensionElements();
+	public void loadProcess() {
+		modelInstance = Bpmn.readModelFromStream(getClass().getClassLoader().getResourceAsStream("invoice.bpmn"));
+		findElementByType();
 	}
 
-	/*BpmnModelInstance modelInstance = Bpmn.createEmptyModel();
-	StartEvent startEvent =
-	CamundaExecutionListener listener = extensionElements.*/
+	public void findElementByType(){
+		ServiceTask serviceTask = modelInstance.getModelElementById("invoice");
+		/*serviceTask.getCamundaExpression().isEqualTo("${execution.setVariable('foo', 'bar')}");
+		serviceTask.isCamundaAsyncBefore()).isTrue();
+		serviceTask.isCamundaExclusive()).isFalse();*/
+		System.out.println("############################" + serviceTask);
+	}
 
 
 	public void getDatabaseConnection() throws ClassNotFoundException, SQLException {
@@ -231,7 +244,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 		try {
 			getDatabaseConnection();
 			stmt = conn.createStatement();
-			String sql = "SELECT NAME, PROC_DEF FROM TAG WHERE USER='"+user+"'";
+			String sql = "SELECT DISTINCT NAME, PROC_DEF FROM TAG WHERE USER='"+user+"'";
 			ResultSet rs = stmt.executeQuery(sql);
 			int g = 0;
 
@@ -365,6 +378,27 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			System.out.println(e);
 		}
 		System.out.println("########## Tag angelegt #########");
+	}
+
+	//***********************************************************************************************************************
+	// Tag für Prozessdefiniton löschen
+	//***********************************************************************************************************************
+
+	@DELETE
+	@Consumes("application/json")
+	@Path("{process-definition-id}/tags/{tagname}")
+	public void deleteProcessDefinitionTag(@PathParam("process-definition-id") String processDefinitionId,
+										   @PathParam("tagname") String tagName){
+		try {
+			getDatabaseConnection();
+			stmt = conn.createStatement();
+			String sql = "DELETE FROM TAG WHERE NAME = '"+tagName+"' AND PROC_DEF = '"+processDefinitionId+"'";
+			stmt.executeUpdate(sql);
+			conn.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		System.out.println("########## Tag gelöscht #########");
 	}
 
 	//***********************************************************************************************************************
