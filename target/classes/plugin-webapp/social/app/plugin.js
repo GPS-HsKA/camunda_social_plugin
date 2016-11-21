@@ -51,6 +51,20 @@ define(['angular'], function(angular) {
     //GET
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    //********************************
+    //Funktion um alle Tags auszulesen
+    //********************************
+
+    function getAllTags() {
+        $http.get(Uri.appUri("plugin://social/:engine/tags"))
+            .success(function(data) {
+                $scope.tags = data;
+                console.log($scope.tags);
+            })
+            .error(function (data, status, header, config) {
+            });
+    }
+
     //*******************************************
     //Tags für eine Process-Defintion-ID auslesen
     //*******************************************
@@ -140,10 +154,39 @@ define(['angular'], function(angular) {
             });
     }
 
+     //DELETE
+     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+     //*****************************************
+     //Tag für eine Process-Defintion-ID löschen
+     //*****************************************
+     $scope.deleteTag = function(tag) {
+         $http.delete(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/"+tag.tagName))
+             .success(function () {
+                 getTags();
+                 getUsers();
+                 getPosts();
+
+                 var status = '# Tag erased #';
+                 var message = tag.tagName + ' removed from process!';
+
+                 Notifications.addMessage({
+                     status: status,
+                     message: message,
+                     http: true,
+                     exclusive: [ 'http' ],
+                     duration: 10000
+                 });
+             })
+             .error(function (data, status, header, config) {
+             });
+     }
+
     //************************************************************************************************
     //Funktions Executions
     //************************************************************************************************
 
+    getAllTags();
     getUsers();
     getTags();
     getPosts();
@@ -247,7 +290,13 @@ define(['angular'], function(angular) {
     });
   }];
 
-  var ngModule = angular.module('cockpit.plugin.social', ["ui.bootstrap"]);
+  var ngModule = angular.module('cockpit.plugin.social', ["ui.bootstrap"])
+      .filter('split', function() {
+          return function (input, splitChar, splitIndex) {
+              // do some bounds checking here to ensure it has that index
+              return input.split(splitChar)[splitIndex];
+          };
+      });
 
   ngModule.config(Configuration);
 
