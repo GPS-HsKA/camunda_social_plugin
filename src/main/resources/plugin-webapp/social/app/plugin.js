@@ -46,13 +46,45 @@ define(['angular'], function(angular) {
 // ************************************************************************************************************************************************
 
 
-    var PostModalController = ["$scope", "$http", "Uri", "Notifications", "$modalInstance", function($scope, $http, Uri, Notifications, $modalInstance) {
+    var PostModalController = ["$scope", "$http", "Uri", "Notifications", "$modalInstance", "tag", function($scope, $http, Uri, Notifications, $modalInstance, tag) {
+
+        $scope.tagName = tag.tagName;
 
         //GET
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         $scope.closePostModal = function () {
             $modalInstance.close();
+        }
+
+        //POST
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        $scope.setPost = function(post) {
+            $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog/" + post.caption + "/" + post.name))
+                .success(function () {
+                    $scope.deleteTag();
+                    $scope.closePostModal();
+                })
+                .error(function (data, status, header, config) {
+                });
+        }
+
+        $scope.deleteTag = function() {
+            $http.delete(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/" + tag.tagName))
+                .success(function () {
+                    var status = '# Tag erased & Post created #';
+                    var message = tag.tagName + ' removed from process!';
+                    Notifications.addMessage({
+                        status: status,
+                        message: message,
+                        http: true,
+                        exclusive: [ 'http' ],
+                        duration: 10000
+                    });
+                })
+                .error(function (data, status, header, config) {
+                });
         }
 
     }];
@@ -177,43 +209,33 @@ define(['angular'], function(angular) {
      //*****************************************
      //Tag für eine Process-Defintion-ID löschen
      //*****************************************
-     $scope.deleteTag = function(tag) {
-         $http.delete(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/"+tag.tagName))
-             .success(function () {
-                 var status = '# Tag erased #';
-                 var message = tag.tagName + ' removed from process!';
 
-                 var modalInstance = $modal.open({
-                     templateUrl: $('base').attr('cockpit-api') + 'plugin/social/static/app/modalPost.html',
-                     controller: PostModalController,
-                     scope: $scope,
-                     size: 'lg',
-                     resolve: {
-                         tagName: function () {
-                             return tag;
-                         }
-                     }
-                 });
-
-                 Notifications.addMessage({
-                     status: status,
-                     message: message,
-                     http: true,
-                     exclusive: [ 'http' ],
-                     duration: 10000
-                 });
-
-                 getTags();
-                 getUsers();
-                 getPosts();
-             })
-             .error(function (data, status, header, config) {
-             });
+     $scope.deleteTagModal = function (tag) {
+         var modalInstance = $modal.open({
+             templateUrl: $('base').attr('cockpit-api') + 'plugin/social/static/app/modalPost.html',
+             controller: PostModalController,
+             scope: $scope,
+             size: 'lg',
+             resolve: {
+                 tag: function () {
+                     return tag;
+                 }
+             }
+         });
+         modalInstance.result.then(function () {
+             $scope.update();
+         });
      }
 
     //************************************************************************************************
     //Funktions Executions
     //************************************************************************************************
+
+    $scope.update = function () {
+        getPosts();
+        getUsers();
+        getTags();
+    }
 
     getAllTags();
     getUsers();
