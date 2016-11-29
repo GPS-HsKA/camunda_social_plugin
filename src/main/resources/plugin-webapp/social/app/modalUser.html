@@ -6,7 +6,7 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                         <span ng-repeat="process in dataSets">
-                            <a ng-click="gotoProcess(process.defId)" class="badge">{{process.defId}}</a></span>
+                            <a ng-click="gotoProcess(process.defId)" class="badge">{{process.defId | split:(':'):0}} Version: {{process.defId | split:(':'):1}}</a></span>
                 </div>
             </div>
             <h4 style="color: #3498db;">Tag interactions from {{userName}}</h4>

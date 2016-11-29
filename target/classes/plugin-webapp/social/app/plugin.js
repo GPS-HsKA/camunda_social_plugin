@@ -1,11 +1,11 @@
 define(['angular'], function(angular) {
 
 // ************************************************************************************************************************************************
-// *************************************************************** MODAL - Controller *************************************************************
+// *************************************************************** USER - MODAL - Controller *************************************************************
 // ************************************************************************************************************************************************
 
 
-    var modalController = ["$scope", "$http", "Uri", "Notifications", "userName", "$window", "$modalInstance", function($scope, $http, Uri, Notifications, userName, $window, $modalInstance) {
+    var UserModalController = ["$scope", "$http", "Uri", "Notifications", "userName", "$window", "$modalInstance", function($scope, $http, Uri, Notifications, userName, $window, $modalInstance) {
 
         $scope.userName = userName;
 
@@ -40,12 +40,29 @@ define(['angular'], function(angular) {
 
     }];
 
+
+// ************************************************************************************************************************************************
+// *************************************************************** POST - MODAL - Controller *************************************************************
+// ************************************************************************************************************************************************
+
+
+    var PostModalController = ["$scope", "$http", "Uri", "Notifications", "$modalInstance", function($scope, $http, Uri, Notifications, $modalInstance) {
+
+        //GET
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        $scope.closePostModal = function () {
+            $modalInstance.close();
+        }
+
+    }];
+
 // ************************************************************************************************************************************************
 // *************************************************************** TAB - Controller ***************************************************************
 // ************************************************************************************************************************************************
 
 
-    var TabController = ["$scope", "$http", "Uri", "Notifications", function($scope, $http, Uri, Notifications) {
+    var TabController = ["$scope", "$http", "Uri", "Notifications", "$modal", function($scope, $http, Uri, Notifications, $modal) {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //GET
@@ -163,12 +180,20 @@ define(['angular'], function(angular) {
      $scope.deleteTag = function(tag) {
          $http.delete(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/"+tag.tagName))
              .success(function () {
-                 getTags();
-                 getUsers();
-                 getPosts();
-
                  var status = '# Tag erased #';
                  var message = tag.tagName + ' removed from process!';
+
+                 var modalInstance = $modal.open({
+                     templateUrl: $('base').attr('cockpit-api') + 'plugin/social/static/app/modalPost.html',
+                     controller: PostModalController,
+                     scope: $scope,
+                     size: 'lg',
+                     resolve: {
+                         tagName: function () {
+                             return tag;
+                         }
+                     }
+                 });
 
                  Notifications.addMessage({
                      status: status,
@@ -177,6 +202,10 @@ define(['angular'], function(angular) {
                      exclusive: [ 'http' ],
                      duration: 10000
                  });
+
+                 getTags();
+                 getUsers();
+                 getPosts();
              })
              .error(function (data, status, header, config) {
              });
@@ -249,7 +278,7 @@ define(['angular'], function(angular) {
    $scope.openUserModal = function(user) {
        var modalInstance = $modal.open({
            templateUrl: $('base').attr('cockpit-api') + 'plugin/social/static/app/modalUser.html',
-           controller: modalController,
+           controller: UserModalController,
            scope: $scope,
            size: 'lg',
            resolve: {
@@ -293,7 +322,6 @@ define(['angular'], function(angular) {
   var ngModule = angular.module('cockpit.plugin.social', ["ui.bootstrap"])
       .filter('split', function() {
           return function (input, splitChar, splitIndex) {
-              // do some bounds checking here to ensure it has that index
               return input.split(splitChar)[splitIndex];
           };
       });

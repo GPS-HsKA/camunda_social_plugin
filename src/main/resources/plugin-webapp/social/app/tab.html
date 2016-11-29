@@ -27,18 +27,20 @@
         </div>
         <div class="col-md-4">
                 <h4 style="color: #3498db;">new Tag</h4>
-                <form class="form">
+                <form class="form" accept-charset=utf-8>
                     <div class="form-group">
                         <input type="text" class="form-control" id="InputName" placeholder="Tagname" data-ng-model="tag.name" list="tagtitle">
                     </div>
                     <button type="submit" ng-click="setTag(tag)" class="btn btn-primary">Generate</button>
                 </form>
                 <h4 style="color: #3498db;">new blogpost</h4>
-                <form class="form">
+                <form class="form" accept-charset=utf-8>
                     <div class="form-group">
                         <input type="text" class="form-control" ng-model="post.caption" id="InputCaption" placeholder="Caption">
                         <textarea type="text" class="form-control" ng-model="post.name" id="InputPost" placeholder="Post"></textarea>
-                        <textarea ui-tinymce ng-model="tinymceModel"></textarea>
+                        <div class="btn-toolbar" data-role="editor-toolbar"
+                             data-target="#editor">
+                        </div>
                     </div>
                     <button type="submit" ng-click="setPost(post)" class="btn btn-primary">Generate</button>
                 </form>

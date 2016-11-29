@@ -5,18 +5,11 @@ import java.sql.*;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
-import org.camunda.bpm.engine.RepositoryService;
-import org.camunda.bpm.engine.impl.cmmn.model.CmmnActivity;
-import org.camunda.bpm.model.bpmn.Bpmn;
+import org.camunda.bpm.engine.impl.util.json.JSONObject;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
-import org.camunda.bpm.model.bpmn.instance.ServiceTask;
-import org.camunda.bpm.model.cmmn.instance.ExtensionElements;
-import org.camunda.bpm.model.cmmn.instance.HumanTask;
-import org.camunda.bpm.model.cmmn.instance.PlanItem;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 
 public class SocialEngineSpecificResource extends AbstractCockpitPluginResource {
 
@@ -35,27 +28,15 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	static java.sql.Connection conn = null;
 	static Statement stmt = null;
 
-	//BPMN Modell
-	protected BpmnModelInstance modelInstance;
 
-
-	@GET
+	/*@GET
 	@Consumes("application/json")
-	@Path("/getXML")
+	@Path("/process-definition/{process-definition-id}/xml")
 	//TODO Tags in XML als Extension Element
-	public void loadProcess() {
-		modelInstance = Bpmn.readModelFromStream(getClass().getClassLoader().getResourceAsStream("invoice.bpmn"));
-		findElementByType();
-	}
-
-	public void findElementByType(){
-		ServiceTask serviceTask = modelInstance.getModelElementById("invoice");
-		/*serviceTask.getCamundaExpression().isEqualTo("${execution.setVariable('foo', 'bar')}");
-		serviceTask.isCamundaAsyncBefore()).isTrue();
-		serviceTask.isCamundaExclusive()).isFalse();*/
-		System.out.println("############################" + serviceTask);
-	}
-
+	public ArrayList getXMLFromProcessId(@PathParam("process-definition-id") String processDefinitionId) {
+			ArrayList dtos = new ArrayList();
+			return outputObj;
+	}*/
 
 	public void getDatabaseConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
