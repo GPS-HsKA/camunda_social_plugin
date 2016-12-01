@@ -21,7 +21,6 @@ public class SocialPluginTest extends AbstractCockpitPluginTest {
 		Assert.assertNotNull(socialPlugin);
 	}
 
-	@Test
 	public void testPluginQueryWorks() {
 
 		QueryService queryService = getQueryService();

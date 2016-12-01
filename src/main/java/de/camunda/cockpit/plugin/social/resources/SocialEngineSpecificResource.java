@@ -91,7 +91,6 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			stmt = conn.createStatement();
 			String sql = "SELECT DISTINCT NAME FROM TAG WHERE PROC_DEF='"+processDefinitionId+"'";
 			ResultSet rs = stmt.executeQuery(sql);
-			int g = 0;
 
 			while (rs.next()) {
 
@@ -124,7 +123,6 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			stmt = conn.createStatement();
 			String sql = "SELECT DISTINCT USER FROM TAG WHERE PROC_DEF='"+processDefinitionId+"'";
 			ResultSet rs = stmt.executeQuery(sql);
-			int g = 0;
 
 			while (rs.next()) {
 
@@ -157,7 +155,6 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			stmt = conn.createStatement();
 			String sql = "SELECT * FROM BLOG WHERE PROC_DEF='"+processDefinitionId+"' ORDER BY TIME DESC";
 			ResultSet rs = stmt.executeQuery(sql);
-			int g = 0;
 
 			while (rs.next()) {
 
@@ -167,6 +164,38 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 				dto.setTagName(rs.getString("POST"));
 				dto.setUser(rs.getString("USER"));
 				dto.setTime(rs.getDate("TIME"));
+
+				dtos.add(dto);
+			}
+
+			rs.close();
+			stmt.close();
+			conn.close();
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		return dtos;
+	}
+
+	//***********************************************************************************************************************
+	// Prozessdefinitionen zu Tag auslesen
+	//***********************************************************************************************************************
+
+	@GET
+	@Produces("application/json")
+	@Path("/{tag}/processdefinitions")
+	public ArrayList<SocialContainerDto> getProcessDefsFromTag(@PathParam("tag") String tag) throws SQLException, ClassNotFoundException {
+		ArrayList<SocialContainerDto> dtos = new ArrayList<SocialContainerDto>();
+		try {
+			getDatabaseConnection();
+			stmt = conn.createStatement();
+			String sql = "SELECT PROC_DEF FROM TAG WHERE NAME='"+tag+"'";
+			ResultSet rs = stmt.executeQuery(sql);
+
+			while (rs.next()) {
+
+				SocialContainerDto dto = new SocialContainerDto();
+				dto.setDefId(rs.getString("PROC_DEF"));
 
 				dtos.add(dto);
 			}

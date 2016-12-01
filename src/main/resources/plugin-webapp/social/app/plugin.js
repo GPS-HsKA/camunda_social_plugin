@@ -1,6 +1,44 @@
 define(['angular'], function(angular) {
 
 // ************************************************************************************************************************************************
+// *************************************************************** TAG - MODAL - Controller *************************************************************
+// ************************************************************************************************************************************************
+
+
+    var TagModalController = ["$scope", "$http", "Uri", "Notifications", "tagName", "$window", "$modalInstance", function($scope, $http, Uri, Notifications, tagName, $window, $modalInstance) {
+
+        //GET
+        ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //*******************************************************
+        //Funktion um Processdefinitionen zu einem Tag auszulesen
+        //*******************************************************
+
+        function getProcessdef(tag) {
+            $http.get(Uri.appUri("plugin://social/:engine/" + tag + "/processdefinitions"))
+                .success(function(data) {
+                    $scope.processdefs = data;
+                    console.log("Prozessdefinitionen: " + $scope.processdefs);
+                })
+                .error(function (data, status, header, config) {
+                });
+        }
+
+        /*$scope.gotoProcess = function (processId) {
+            $window.open($('base').attr('href') + '#/process-definition/' + processId);
+            return false;
+        }*/
+
+
+        $scope.closeTagModal = function () {
+            $modalInstance.close();
+        };
+
+        getProcessdef(tagName);
+
+    }];
+
+// ************************************************************************************************************************************************
 // *************************************************************** USER - MODAL - Controller *************************************************************
 // ************************************************************************************************************************************************
 
@@ -310,6 +348,20 @@ define(['angular'], function(angular) {
            }
        });
    };
+
+  $scope.openTagModal = function(tag) {
+      var modalInstance = $modal.open({
+          templateUrl: $('base').attr('cockpit-api') + 'plugin/social/static/app/modalTag.html',
+          controller: TagModalController,
+          scope: $scope,
+          size: 'lg',
+          resolve: {
+              tagName: function () {
+                  return tag;
+              }
+          }
+      });
+  };
 
    $scope.gotoProcess = function (processId) {
        $window.open($('base').attr('href') + '#/process-definition/' + processId);
