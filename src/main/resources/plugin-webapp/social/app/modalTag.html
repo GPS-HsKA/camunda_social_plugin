@@ -1,12 +1,11 @@
 <div class="modal-header">
-    <h3 class="modal-title">Process Definitions for {{userName}}</h3>
+    <h3 class="modal-title">Process Definitions for {{tagName}}</h3>
 </div>
 <div class="modal-body">
-    <h4 style="color: #3498db;">Heading</h4>
     <div class="panel panel-default">
         <div class="panel-heading">
                         <span ng-repeat="process in processdefs">
-                            <a ng-click="#" class="badge">{{process.defId | split:(':'):0}} Version: {{process.defId | split:(':'):1}}</a></span>
+                            <a ng-click="gotoProcess(process.defId)" class="badge">{{process.defId | split:(':'):0}} Version: {{process.defId | split:(':'):1}}</a></span>
         </div>
     </div>
 </div>

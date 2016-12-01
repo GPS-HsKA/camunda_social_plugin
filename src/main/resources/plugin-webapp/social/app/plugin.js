@@ -7,6 +7,8 @@ define(['angular'], function(angular) {
 
     var TagModalController = ["$scope", "$http", "Uri", "Notifications", "tagName", "$window", "$modalInstance", function($scope, $http, Uri, Notifications, tagName, $window, $modalInstance) {
 
+        $scope.tagName = tagName;
+
         //GET
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -18,17 +20,15 @@ define(['angular'], function(angular) {
             $http.get(Uri.appUri("plugin://social/:engine/" + tag + "/processdefinitions"))
                 .success(function(data) {
                     $scope.processdefs = data;
-                    console.log("Prozessdefinitionen: " + $scope.processdefs);
                 })
                 .error(function (data, status, header, config) {
                 });
         }
 
-        /*$scope.gotoProcess = function (processId) {
+        $scope.gotoProcess = function (processId) {
             $window.open($('base').attr('href') + '#/process-definition/' + processId);
             return false;
-        }*/
-
+        }
 
         $scope.closeTagModal = function () {
             $modalInstance.close();
@@ -58,7 +58,6 @@ define(['angular'], function(angular) {
             $http.get(Uri.appUri("plugin://social/:engine/tags/" + userName))
                 .success(function (data) {
                     $scope.dataSets = data;
-                    console.log($scope.dataSets);
                 })
                 .error(function (data, status, header, config) {
                 });
@@ -146,7 +145,6 @@ define(['angular'], function(angular) {
         $http.get(Uri.appUri("plugin://social/:engine/tags"))
             .success(function(data) {
                 $scope.tags = data;
-                console.log($scope.tags);
             })
             .error(function (data, status, header, config) {
             });
@@ -159,7 +157,6 @@ define(['angular'], function(angular) {
       $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags"))
           .success(function (data) {
             $scope.processTags = data;
-            console.log($scope.processTags);
           });
     }
 
@@ -170,7 +167,6 @@ define(['angular'], function(angular) {
         $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/users"))
             .success(function (data) {
                 $scope.processUsers = data;
-                console.log($scope.processUsers);
             });
     }
 
@@ -181,7 +177,6 @@ define(['angular'], function(angular) {
         $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog"))
             .success(function (data) {
                 $scope.processPosts = data;
-                console.log($scope.processPosts);
             });
     }
 
@@ -296,7 +291,6 @@ define(['angular'], function(angular) {
       $http.get(Uri.appUri("plugin://social/:engine/tags"))
           .success(function(data) {
             $scope.tags = data;
-            console.log($scope.tags);
           })
           .error(function (data, status, header, config) {
           });
@@ -310,7 +304,6 @@ define(['angular'], function(angular) {
         $http.get(Uri.appUri("plugin://social/:engine/users"))
             .success(function(data) {
                 $scope.users = data;
-                console.log($scope.users);
             })
             .error(function (data, status, header, config) {
             });
@@ -324,7 +317,6 @@ define(['angular'], function(angular) {
         $http.get(Uri.appUri("plugin://social/:engine/blog"))
             .success(function(data) {
                 $scope.posts = data;
-                console.log($scope.posts);
             })
             .error(function (data, status, header, config) {
             });
