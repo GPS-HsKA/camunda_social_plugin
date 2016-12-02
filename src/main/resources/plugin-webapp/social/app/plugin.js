@@ -1,4 +1,4 @@
-define(['angular'], function(angular) {
+define(['jquery','angular'], function($, angular) {
 
 // ************************************************************************************************************************************************
 // *************************************************************** TAG - MODAL - Controller *************************************************************
@@ -86,6 +86,7 @@ define(['angular'], function(angular) {
     var PostModalController = ["$scope", "$http", "Uri", "Notifications", "$modalInstance", "tag", function($scope, $http, Uri, Notifications, $modalInstance, tag) {
 
         $scope.tagName = tag.tagName;
+        $scope.post = {caption: 'Tag ' + tag.tagName + ' deleted'};
 
         //GET
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +99,7 @@ define(['angular'], function(angular) {
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         $scope.setPost = function(post) {
-            $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog/" + post.caption + "/" + post.name))
+            $http.post(Uri.appUri("plugin://social/:engine/"+$scope.processDefinition.id+"/blog/"+post.caption+"/"+post.name+"/true"))
                 .success(function () {
                     $scope.deleteTag();
                     $scope.closePostModal();
@@ -177,6 +178,7 @@ define(['angular'], function(angular) {
         $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog"))
             .success(function (data) {
                 $scope.processPosts = data;
+                console.log($scope.processPosts);
             });
     }
 
@@ -213,7 +215,7 @@ define(['angular'], function(angular) {
     //Blogpost anlegen
     //*****************************************
     $scope.setPost = function(post) {
-        $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog/" +post.caption+ "/" +post.name))
+        $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog/" +post.caption+ "/" +post.name+ "/false"))
             .success(function () {
                 getPosts();
                 getUsers();
@@ -235,6 +237,7 @@ define(['angular'], function(angular) {
             .error(function (data, status, header, config) {
             });
     }
+
 
      //DELETE
      ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -274,6 +277,15 @@ define(['angular'], function(angular) {
     getUsers();
     getTags();
     getPosts();
+
+        $scope.tinymceOptions = {
+            resize: false,
+            width: 400,  // I *think* its a number and not '400' string
+            height: 300,
+            plugins: 'print textcolor',
+            toolbar: "undo redo styleselect bold italic print forecolor backcolor"
+
+        };
 
   }];
 
@@ -317,6 +329,7 @@ define(['angular'], function(angular) {
         $http.get(Uri.appUri("plugin://social/:engine/blog"))
             .success(function(data) {
                 $scope.posts = data;
+                console.log($scope.posts);
             })
             .error(function (data, status, header, config) {
             });
@@ -360,32 +373,34 @@ define(['angular'], function(angular) {
        return false;
    }
 
+   $scope.statusIconMapping = {
+       "true": "half_circle.jpg",
+       "false": "full_circle.jpg"
+   };
+
+
   }];
 
   var Configuration = ['ViewsProvider', function(ViewsProvider) {
 
     ViewsProvider.registerDefaultView('cockpit.processDefinition.runtime.tab', {
       id: 'process-definitions',
-      label: 'Social Pool',
+      label: 'Social Interactions',
       url: 'plugin://social/static/app/tab.html',
       controller: TabController,
-
-      // make sure we have a higher priority than the default plugin
       priority: 12
     });
 
     ViewsProvider.registerDefaultView('cockpit.dashboard', {
       id: 'process-definitions',
-      label: 'Social Pool',
+      label: 'Social Interactions',
       url: 'plugin://social/static/app/dashboard.html',
       controller: DashboardController,
-
-      // make sure we have a higher priority than the default plugin
       priority: 12
     });
   }];
 
-  var ngModule = angular.module('cockpit.plugin.social', ["ui.bootstrap"])
+  var ngModule = angular.module('cockpit.plugin.social', ['ui.bootstrap'])
       .filter('split', function() {
           return function (input, splitChar, splitIndex) {
               return input.split(splitChar)[splitIndex];

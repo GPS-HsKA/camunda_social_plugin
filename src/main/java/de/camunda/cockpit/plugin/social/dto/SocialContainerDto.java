@@ -12,6 +12,7 @@ public class SocialContainerDto {
     private Date time;
     private String caption;
     private Integer userAmount;
+    private String tagStatus;
 
 	public Integer getId() {
 		return id;
@@ -67,6 +68,13 @@ public class SocialContainerDto {
     }
     public void setUserAmount(Integer userAmount) {
         this.userAmount = userAmount;
+    }
+
+    public String getTagStatus() {
+        return tagStatus;
+    }
+    public void setTagStatus(String tagStatus) {
+        this.tagStatus = tagStatus;
     }
 
 }

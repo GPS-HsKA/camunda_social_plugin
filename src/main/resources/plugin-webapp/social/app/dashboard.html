@@ -34,9 +34,9 @@
             <ul class="list-unstyled">
                 <li ng-repeat="post in posts">
                     <blockquote>
-                        <strong style="color: #90a0dd;" ng-click="gotoProcess(post.defId)">{{post.caption}}</strong><br>
+                        <i class="glyphicon" ng-class="{'glyphicon-pencil' : post.tagStatus=='false', 'glyphicon-alert' : post.tagStatus=='true'}"></i><strong style="color: dodgerblue;" ng-click="gotoProcess(post.defId)"> {{post.caption}}</strong><br>
                         {{post.post}}
-                        <cite class="clearfix"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span style="color: blue;" ng-click="openUserModal(post.user)">{{post.user}}</span> on {{post.time | date}} in <span ng-click="gotoProcess(post.defId)" style="color: blue;">{{post.defId | split:(':'):0}} Version: {{post.defId | split:(':'):1}}</span></cite>
+                        <cite class="clearfix"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span style="color: dodgerblue;" ng-click="openUserModal(post.user)">{{post.user}}</span> on {{post.time | date}} in <span ng-click="gotoProcess(post.defId)" style="color: dodgerblue;">{{post.defId | split:(':'):0}} Version: {{post.defId | split:(':'):1}}</span></cite>
                     </blockquote>
                 </li>
             </ul>

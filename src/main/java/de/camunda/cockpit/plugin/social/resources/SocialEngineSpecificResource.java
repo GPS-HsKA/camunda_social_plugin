@@ -9,6 +9,7 @@ import org.camunda.bpm.engine.impl.util.json.JSONObject;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class SocialEngineSpecificResource extends AbstractCockpitPluginResource {
@@ -40,7 +41,6 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 
 	public void getDatabaseConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
-		System.out.println("Connecting to database...");
 		conn = DriverManager.getConnection(DB_URL, USER, PASS);
 	}
 
@@ -53,7 +53,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			System.out.println("Creating database...");
 			stmt = conn.createStatement();
 			String sql = "CREATE TABLE TAG (ID bigint auto_increment PRIMARY KEY, NAME VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255))";
-			String sql1 = "CREATE TABLE BLOG (ID bigint auto_increment PRIMARY KEY, CAPTION VARCHAR(255), POST VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255), TIME DATE)";
+			String sql1 = "CREATE TABLE BLOG (ID bigint auto_increment PRIMARY KEY, CAPTION VARCHAR(255), POST VARCHAR(255), PROC_DEF VARCHAR (255), USER VARCHAR (255), TIME TIMESTAMP, TAGDELETED VARCHAR (10))";
 			stmt.execute(sql);
 			stmt.execute(sql1);
 			System.out.println("Database created successfully...");
@@ -162,6 +162,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 				dto.setId(rs.getInt("ID"));
 				dto.setCaption(rs.getString("CAPTION"));
 				dto.setTagName(rs.getString("POST"));
+				dto.setTagStatus(rs.getString("TAGDELETED"));
 				dto.setUser(rs.getString("USER"));
 				dto.setTime(rs.getDate("TIME"));
 
@@ -331,6 +332,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 				dto.setId(rs.getInt("ID"));
 				dto.setCaption(rs.getString("CAPTION"));
 				dto.setPost(rs.getString("POST"));
+				dto.setTagStatus(rs.getString("TAGDELETED"));
 				dto.setDefId(rs.getString("PROC_DEF"));
 				dto.setUser(rs.getString("USER"));
 				dto.setTime(rs.getDate("TIME"));
@@ -381,7 +383,6 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			stmt = conn.createStatement();
 			String sql = "INSERT INTO TAG VALUES(default,'"+tagName+"', '"+processDefinitionId+"','"+user+"')";
 			stmt.executeUpdate(sql);
-			int g = 0;
 			stmt.close();
 			conn.close();
 		} catch (Exception e) {
@@ -417,23 +418,24 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 
 	@POST
 	@Consumes("application/json")
-	@Path("{process-definition-id}/blog/{caption}/{post}")
+	@Path("{process-definition-id}/blog/{caption}/{post}/{TagDeleted}")
 	public void setProcessDefinitionPost(@PathParam("process-definition-id") String processDefinitionId,
 										 @PathParam("caption") String caption,
-										 @PathParam("post") String post){
+										 @PathParam("post") String post,
+										 @PathParam("TagDeleted") String tagDeleted){
 		try {
+			Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 			getDatabaseConnection();
 			String user = getUserId();
 			stmt = conn.createStatement();
-			String sql = "INSERT INTO BLOG VALUES(default, '"+caption+"', '"+post+"', '"+processDefinitionId+"','"+user+"',CURRENT_TIMESTAMP())";
+			String sql = "INSERT INTO BLOG VALUES(default, '"+caption+"', '"+post+"', '"+processDefinitionId+"','"+user+"','"+timestamp+"', '"+tagDeleted+"')";
 			stmt.executeUpdate(sql);
-			int g = 0;
 			stmt.close();
 			conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
-		System.out.println("########## Tag angelegt #########");
+		System.out.println("########## Blogpost angelegt #########");
 	}
 }
 
