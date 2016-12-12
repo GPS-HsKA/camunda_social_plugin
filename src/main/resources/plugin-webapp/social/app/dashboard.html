@@ -11,7 +11,7 @@
     <h3>Community Interactions</h3>
     <div class="row">
         <div class="col-md-4">
-        <h4 style="color: #3498db;">Tag-Cloud</h4>
+            <h4 style="color: #3498db;"><span class="glyphicon glyphicon-tag" aria-hidden="true"></span> Tag-Cloud</h4>
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <span ng-repeat="tag in tags">
@@ -20,26 +20,26 @@
             </div>
         </div>
         <div class="col-md-4">
-            <h4 style="color: #3498db;">Users in processes</h4>
-                <div class="panel panel-default">
-                    <div class="panel-heading">
+            <h4 style="color: #3498db;"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Users in processes</h4>
+            <div class="panel panel-default">
+                <div class="panel-heading">
                         <span ng-repeat="user in users">
                             <a ng-click="openUserModal(user.user)" class="badge"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{user.user}}</a></span>
-                    </div>
                 </div>
+            </div>
         </div>
         <div class="col-md-4">
-            <h4 style="color: #3498db;">Microblog</h4>
+            <h4 style="color: #3498db;"><span class="glyphicon glyphicon-tasks" aria-hidden="true"></span> Microblog</h4>
             <div style="overflow: auto; height: 300px">
-            <ul class="list-unstyled">
-                <li ng-repeat="post in posts">
-                    <blockquote>
-                        <i class="glyphicon" ng-class="{'glyphicon-pencil' : post.tagStatus=='false', 'glyphicon-alert' : post.tagStatus=='true'}"></i><strong style="color: dodgerblue;" ng-click="gotoProcess(post.defId)"> {{post.caption}}</strong><br>
-                        {{post.post}}
-                        <cite class="clearfix"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span style="color: dodgerblue;" ng-click="openUserModal(post.user)">{{post.user}}</span> on {{post.time | date}} in <span ng-click="gotoProcess(post.defId)" style="color: dodgerblue;">{{post.defId | split:(':'):0}} Version: {{post.defId | split:(':'):1}}</span></cite>
-                    </blockquote>
-                </li>
-            </ul>
+                <ul class="list-unstyled">
+                    <li ng-repeat="post in posts">
+                        <blockquote>
+                            <i class="glyphicon" ng-class="{'glyphicon-pencil' : post.tagStatus=='false', 'glyphicon-alert' : post.tagStatus=='true'}"></i><strong style="color: dodgerblue;" ng-click="gotoProcess(post.defId)"> {{post.caption}}</strong><br>
+                            {{post.post}}
+                            <cite class="clearfix"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> <span style="color: dodgerblue;" ng-click="openUserModal(post.user)">{{post.user}}</span> on {{post.time | date}} in <span ng-click="gotoProcess(post.defId)" style="color: dodgerblue;">{{post.defId | split:(':'):0}} Version: {{post.defId | split:(':'):1}}</span></cite>
+                        </blockquote>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
