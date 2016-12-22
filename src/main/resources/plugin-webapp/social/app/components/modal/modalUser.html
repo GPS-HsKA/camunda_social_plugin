@@ -1,0 +1,22 @@
+<div class="modal-header">
+    <h3 class="modal-title">Social Pool for {{userName}}</h3>
+</div>
+<div class="modal-body">
+    <h4 style="color: #3498db;">Process interactions from {{userName}}</h4>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+                        <span ng-repeat="process in dataSets">
+                            <a ng-click="gotoProcess(process.defId)" class="badge">{{process.defId | split:(':'):0}} Version: {{process.defId | split:(':'):1}}</a></span>
+        </div>
+    </div>
+    <h4 style="color: #3498db;">Tag interactions from {{userName}}</h4>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+                        <span ng-repeat="process in dataSets">
+                            <a ng-click="#" class="badge">{{process.tagName}}</a></span>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="closeUserModal()">Close</button>
+</div>
