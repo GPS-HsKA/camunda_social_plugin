@@ -5,12 +5,25 @@ import java.sql.*;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
+import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.impl.util.json.JSONObject;
+import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
+import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants;
+import org.camunda.bpm.model.bpmn.impl.instance.ProcessImpl;
+import org.camunda.bpm.model.bpmn.instance.ExtensionElements;
+import org.camunda.bpm.model.bpmn.instance.StartEvent;
+import org.camunda.bpm.model.bpmn.instance.camunda.CamundaExecutionListener;
+import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperties;
+import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperty;
+import org.camunda.bpm.model.xml.instance.ModelElementInstance;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+
+import static com.sun.org.apache.xerces.internal.util.PropertyState.is;
 
 public class SocialEngineSpecificResource extends AbstractCockpitPluginResource {
 
@@ -29,20 +42,41 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	static java.sql.Connection conn = null;
 	static Statement stmt = null;
 
+	//***********************************************************************************************************************
+	// Extension Elements auslesen
+	//***********************************************************************************************************************
 
-	/*@GET
+	@GET
 	@Consumes("application/json")
-	@Path("/process-definition/{process-definition-id}/xml")
+	@Path("/process-definition/{process-definition-id}/{key}/xml")
 	//TODO Tags in XML als Extension Element
-	public ArrayList getXMLFromProcessId(@PathParam("process-definition-id") String processDefinitionId) {
-			ArrayList dtos = new ArrayList();
-			return outputObj;
-	}*/
+	public void execute (@PathParam("process-definition-id") String processDefinitionId,
+						 @PathParam("key") String key)throws Exception {
+
+		BpmnModelInstance modelInstance = getProcessEngine().getRepositoryService().getBpmnModelInstance(processDefinitionId);
+
+		ProcessImpl process = modelInstance.getModelElementById(key);
+		CamundaProperties camundaProperties = process.getExtensionElements().getElementsQuery()
+				.filterByType(CamundaProperties.class).singleResult();
+			Collection<CamundaProperty> properties = camundaProperties.getCamundaProperties();
+			for (CamundaProperty property : properties) {
+				System.out.println(property.getAttributeValue("tag"));
+			}
+	}
+
+	//***********************************************************************************************************************
+	// Datenbankverbindung herstellen
+	//***********************************************************************************************************************
+
 
 	public void getDatabaseConnection() throws ClassNotFoundException, SQLException {
 		Class.forName("org.h2.Driver");
 		conn = DriverManager.getConnection(DB_URL, USER, PASS);
 	}
+
+	//***********************************************************************************************************************
+	// Tabellen erstellen
+	//***********************************************************************************************************************
 
 	@GET
 	@Consumes("application/json")

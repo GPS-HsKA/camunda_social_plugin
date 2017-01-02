@@ -1,4 +1,4 @@
-de/camunda/cockpit/plugin/social/dto/SocialContainerDto.class
 de/camunda/cockpit/plugin/social/resources/SocialEngineSpecificResource.class
+de/camunda/cockpit/plugin/social/dto/SocialContainerDto.class
 de/camunda/cockpit/plugin/social/resources/SocialRootResource.class
 de/camunda/cockpit/plugin/social/SocialPlugin.class
