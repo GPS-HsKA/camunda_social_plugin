@@ -9,19 +9,25 @@ import org.camunda.bpm.engine.delegate.DelegateExecution;
 import org.camunda.bpm.engine.impl.util.json.JSONObject;
 import org.camunda.bpm.engine.runtime.ProcessInstance;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
+import org.camunda.bpm.model.bpmn.builder.AbstractBaseElementBuilder;
 import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants;
 import org.camunda.bpm.model.bpmn.impl.instance.ProcessImpl;
+import org.camunda.bpm.model.bpmn.instance.BpmnModelElementInstance;
 import org.camunda.bpm.model.bpmn.instance.ExtensionElements;
 import org.camunda.bpm.model.bpmn.instance.StartEvent;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaExecutionListener;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperties;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperty;
+import org.camunda.bpm.model.xml.ModelInstance;
+import org.camunda.bpm.model.xml.instance.DomElement;
 import org.camunda.bpm.model.xml.instance.ModelElementInstance;
+import org.camunda.bpm.model.xml.type.ModelElementType;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import static com.sun.org.apache.xerces.internal.util.PropertyState.is;
 
@@ -47,21 +53,28 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	//***********************************************************************************************************************
 
 	@GET
-	@Consumes("application/json")
+	@Produces("application/json")
 	@Path("/process-definition/{process-definition-id}/{key}/xml")
 	//TODO Tags in XML als Extension Element
-	public void execute (@PathParam("process-definition-id") String processDefinitionId,
-						 @PathParam("key") String key)throws Exception {
+	public ArrayList<String> xmlParse (@PathParam("process-definition-id") String processDefinitionId,
+									   @PathParam("key") String key) throws Exception {
+
+		System.out.println("############ - Name des Keys: " + key);
 
 		BpmnModelInstance modelInstance = getProcessEngine().getRepositoryService().getBpmnModelInstance(processDefinitionId);
-
 		ProcessImpl process = modelInstance.getModelElementById(key);
-		CamundaProperties camundaProperties = process.getExtensionElements().getElementsQuery()
-				.filterByType(CamundaProperties.class).singleResult();
-			Collection<CamundaProperty> properties = camundaProperties.getCamundaProperties();
-			for (CamundaProperty property : properties) {
-				System.out.println(property.getAttributeValue("tag"));
+
+		Collection<CamundaProperty> camundaProperties = process.getExtensionElements().getElementsQuery().filterByType(CamundaProperties.class).singleResult().getCamundaProperties();
+
+		ArrayList<String> tags = new ArrayList<String>();
+
+		for (CamundaProperty property : camundaProperties) {
+			if ("tag".equals(property.getCamundaName())) {
+				tags.add(property.getCamundaValue());
 			}
+		}
+
+		return tags;
 	}
 
 	//***********************************************************************************************************************
