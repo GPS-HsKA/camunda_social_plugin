@@ -34,7 +34,6 @@ define(['angular', '../modal/postModalController'], function(angular, postmodalC
     function getAllBpmnTags() {
         $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/" + $scope.processDefinition.key))
             .success(function(data) {
-                console.log($scope.processDefinition.key);
                 $scope.bpmnTags = data;
             })
             .error(function (data, status, header, config) {
@@ -68,7 +67,6 @@ define(['angular', '../modal/postModalController'], function(angular, postmodalC
         $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog"))
             .success(function (data) {
                 $scope.processPosts = data;
-                console.log($scope.processPosts);
             });
     }
 
