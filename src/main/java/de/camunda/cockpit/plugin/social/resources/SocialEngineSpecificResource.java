@@ -1,35 +1,28 @@
 package de.camunda.cockpit.plugin.social.resources;
 
 import javax.ws.rs.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.*;
 
 import de.camunda.cockpit.plugin.social.dto.SocialContainerDto;
 import org.camunda.bpm.cockpit.plugin.resource.AbstractCockpitPluginResource;
-import org.camunda.bpm.engine.delegate.DelegateExecution;
-import org.camunda.bpm.engine.impl.util.json.JSONObject;
-import org.camunda.bpm.engine.runtime.ProcessInstance;
+import org.camunda.bpm.model.bpmn.Bpmn;
 import org.camunda.bpm.model.bpmn.BpmnModelInstance;
-import org.camunda.bpm.model.bpmn.builder.AbstractBaseElementBuilder;
-import org.camunda.bpm.model.bpmn.impl.BpmnModelConstants;
 import org.camunda.bpm.model.bpmn.impl.instance.ProcessImpl;
-import org.camunda.bpm.model.bpmn.instance.BpmnModelElementInstance;
 import org.camunda.bpm.model.bpmn.instance.ExtensionElements;
-import org.camunda.bpm.model.bpmn.instance.StartEvent;
-import org.camunda.bpm.model.bpmn.instance.camunda.CamundaExecutionListener;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperties;
 import org.camunda.bpm.model.bpmn.instance.camunda.CamundaProperty;
-import org.camunda.bpm.model.xml.ModelInstance;
-import org.camunda.bpm.model.xml.instance.DomElement;
-import org.camunda.bpm.model.xml.instance.ModelElementInstance;
-import org.camunda.bpm.model.xml.type.ModelElementType;
+import org.camunda.bpm.engine.repository.Deployment;
+import org.camunda.bpm.engine.repository.DeploymentBuilder;
+import org.camunda.bpm.engine.repository.ProcessDefinition;
+
 
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-
-import static com.sun.org.apache.xerces.internal.util.PropertyState.is;
 
 public class SocialEngineSpecificResource extends AbstractCockpitPluginResource {
 
@@ -47,35 +40,6 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	//Database Connection
 	static java.sql.Connection conn = null;
 	static Statement stmt = null;
-
-	//***********************************************************************************************************************
-	// Extension Elements auslesen
-	//***********************************************************************************************************************
-
-	@GET
-	@Produces("application/json")
-	@Path("/process-definition/{process-definition-id}/{key}/xml")
-	//TODO Tags in XML als Extension Element
-	public ArrayList<String> xmlParse (@PathParam("process-definition-id") String processDefinitionId,
-									   @PathParam("key") String key) throws Exception {
-
-		System.out.println("############ - Name des Keys: " + key);
-
-		BpmnModelInstance modelInstance = getProcessEngine().getRepositoryService().getBpmnModelInstance(processDefinitionId);
-		ProcessImpl process = modelInstance.getModelElementById(key);
-
-		Collection<CamundaProperty> camundaProperties = process.getExtensionElements().getElementsQuery().filterByType(CamundaProperties.class).singleResult().getCamundaProperties();
-
-		ArrayList<String> tags = new ArrayList<String>();
-
-		for (CamundaProperty property : camundaProperties) {
-			if ("tag".equals(property.getCamundaName())) {
-				tags.add(property.getCamundaValue());
-			}
-		}
-
-		return tags;
-	}
 
 	//***********************************************************************************************************************
 	// Datenbankverbindung herstellen
@@ -125,6 +89,38 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 	}
 
 	//***********************************************************************************************************************
+	// Extension Elements auslesen
+	//***********************************************************************************************************************
+
+	@GET
+	@Produces("application/json")
+	@Path("/{process-definition-id}/{key}")
+	public ArrayList<String> xmlParse (@PathParam("process-definition-id") String processDefinitionId,
+									   @PathParam("key") String key) throws Exception {
+
+		BpmnModelInstance modelInstance = getProcessEngine().getRepositoryService().getBpmnModelInstance(processDefinitionId);
+		ProcessImpl process = modelInstance.getModelElementById(key);
+
+		ArrayList<String> tags = new ArrayList<String>();
+		try {
+			CamundaProperties properties = process.getExtensionElements().getElementsQuery().filterByType(CamundaProperties.class).singleResult();
+			if (properties != null) {
+				Collection<CamundaProperty> camundaProperties = properties.getCamundaProperties();
+
+				for (CamundaProperty property : camundaProperties) {
+					if ("tag".equals(property.getCamundaName())) {
+						tags.add(property.getCamundaValue());
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return tags;
+	}
+
+	//***********************************************************************************************************************
 	// Tag zu ProzessDefiniton auslesen
 	//***********************************************************************************************************************
 
@@ -148,8 +144,8 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			}
 
 			rs.close();
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -180,8 +176,8 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			}
 
 			rs.close();
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -217,8 +213,8 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			}
 
 			rs.close();
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -249,8 +245,8 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			}
 
 			rs.close();
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -282,8 +278,8 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			}
 
 			rs.close();
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -316,8 +312,8 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			}
 
 			rs.close();
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -349,8 +345,8 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			}
 
 			rs.close();
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -388,8 +384,8 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			}
 
 			rs.close();
-			stmt.close();
-			conn.close();
+			//stmt.close();
+			//conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -421,8 +417,9 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 
 	@POST
 	@Consumes("application/json")
-	@Path("{process-definition-id}/tags/{tagname}")
+	@Path("{process-definition-id}/tags/{key}/{tagname}")
 	public void setProcessDefinitionTag(@PathParam("process-definition-id") String processDefinitionId,
+										@PathParam("key") String key,
 										@PathParam("tagname") String tagName){
 		try {
 			getDatabaseConnection();
@@ -430,8 +427,11 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			stmt = conn.createStatement();
 			String sql = "INSERT INTO TAG VALUES(default,'"+tagName+"', '"+processDefinitionId+"','"+user+"')";
 			stmt.executeUpdate(sql);
-			stmt.close();
+			//stmt.close();
 			conn.close();
+			// XML - Extension
+			createExtensionTag(processDefinitionId, key, tagName);
+
 		} catch (Exception e) {
 			System.out.println(e);
 		}
@@ -452,6 +452,7 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			stmt = conn.createStatement();
 			String sql = "DELETE FROM TAG WHERE NAME = '"+tagName+"' AND PROC_DEF = '"+processDefinitionId+"'";
 			stmt.executeUpdate(sql);
+			//stmt.close();
 			conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
@@ -477,13 +478,65 @@ public class SocialEngineSpecificResource extends AbstractCockpitPluginResource 
 			stmt = conn.createStatement();
 			String sql = "INSERT INTO BLOG VALUES(default, '"+caption+"', '"+post+"', '"+processDefinitionId+"','"+user+"','"+timestamp+"', '"+tagDeleted+"')";
 			stmt.executeUpdate(sql);
-			stmt.close();
+			//stmt.close();
 			conn.close();
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 		System.out.println("########## Blogpost angelegt #########");
 	}
+
+	//***********************************************************************************************************************
+	// Deployment Prozess für neue Tag-Version
+	//***********************************************************************************************************************
+
+	public ProcessDefinition deploy(String deploymentName, File bpmnFile) throws FileNotFoundException {
+		DeploymentBuilder deploymentBuilder = getProcessEngine().getRepositoryService().createDeployment();
+		deploymentBuilder.addInputStream(bpmnFile.getName(), new FileInputStream(bpmnFile));
+		deploymentBuilder.name(deploymentName);
+		Deployment deployment = deploymentBuilder.deploy();
+
+		ProcessDefinition processDefinition = getProcessEngine().getRepositoryService().createProcessDefinitionQuery().deploymentId(deployment.getId()).singleResult();
+		return processDefinition;
+	}
+
+	//***********************************************************************************************************************
+	// Camunda Extension Element für Tag erstellen
+	//***********************************************************************************************************************
+
+	public void createExtensionTag(String processDefinitionId, String key, String tagName) throws IOException {
+
+		BpmnModelInstance modelInstance = getProcessEngine().getRepositoryService().getBpmnModelInstance(processDefinitionId);
+		ProcessImpl process = modelInstance.getModelElementById(key);
+
+		ExtensionElements extensionElements = process.getExtensionElements();
+
+		if (extensionElements == null) {
+			extensionElements = modelInstance.newInstance(ExtensionElements.class);
+			process.setExtensionElements(extensionElements);
+
+			CamundaProperties camundaProperties = extensionElements.addExtensionElement(CamundaProperties.class);
+
+			CamundaProperty camundaProperty = modelInstance.newInstance(CamundaProperty.class);
+			camundaProperty.setCamundaName("tag");
+			camundaProperty.setCamundaValue(tagName);
+
+			camundaProperties.addChildElement(camundaProperty);
+		} else {
+			CamundaProperty camundaProperty = modelInstance.newInstance(CamundaProperty.class);
+			camundaProperty.setCamundaName("tag");
+			camundaProperty.setCamundaValue(tagName);
+
+			CamundaProperties camundaProperties = extensionElements.getElementsQuery().filterByType(CamundaProperties.class).singleResult();
+			camundaProperties.addChildElement(camundaProperty);
+		}
+
+		File file = File.createTempFile("bpmn-model-api-", ".bpmn");
+		Bpmn.writeModelToFile(file, modelInstance);
+
+		deploy(key, file);
+	}
+
 }
 
 

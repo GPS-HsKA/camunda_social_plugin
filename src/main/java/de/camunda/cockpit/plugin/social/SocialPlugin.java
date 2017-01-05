@@ -12,9 +12,9 @@ public class SocialPlugin extends AbstractCockpitPlugin {
 
   public static final String ID = "social";
 
-  private static final String[] MAPPING_FILES = {
+  /*private static final String[] MAPPING_FILES = {
 	    "org/camunda/social/cockpit/plugin/social-plugin/queries/social.xml"
-	  };
+	  };*/
 
   public String getId() {
     return ID;
@@ -29,10 +29,10 @@ public class SocialPlugin extends AbstractCockpitPlugin {
     return classes;
   }
 
-  @Override
+  /*@Override
 	public List<String> getMappingFiles() {
 	  return Arrays.asList(MAPPING_FILES);
-	}
+	}*/
 
 
 

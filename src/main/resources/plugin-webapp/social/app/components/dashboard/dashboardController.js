@@ -11,9 +11,9 @@ define(['angular', '../modal/tagModalController', '../modal/userModalController'
 
     return ["$scope", "$http", "Uri", "$modal", "$window", function($scope, $http, Uri, $modal, $window) {
 
-    //********************************
-    //Funktion um alle Tags auszulesen
-    //********************************
+    //******************************************
+    //Funktion um alle Datenbank Tags auszulesen
+    //******************************************
 
     function getAllTags() {
         $http.get(Uri.appUri("plugin://social/:engine/tags"))

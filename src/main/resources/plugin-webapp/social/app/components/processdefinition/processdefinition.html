@@ -18,6 +18,13 @@
                                                                         ng-click="deleteTagModal(tag)">X</span></span>
                 </div>
             </div>
+            <h4 style="color: #3498db;">BPMN2.0 Tags</h4>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span ng-repeat="bpmntag in bpmnTags">
+                        <span class="badge">{{bpmntag}}</span></span>
+                </div>
+            </div>
             <h4 style="color: #3498db;">Users in process</h4>
             <div class="panel panel-default">
                 <div class="panel-heading">

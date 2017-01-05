@@ -27,6 +27,20 @@ define(['angular', '../modal/postModalController'], function(angular, postmodalC
             });
     }
 
+    //****************************************
+    //Funktion um alle BPMN2.0 Tags auszulesen
+    //****************************************
+
+    function getAllBpmnTags() {
+        $http.get(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/" + $scope.processDefinition.key))
+            .success(function(data) {
+                console.log($scope.processDefinition.key);
+                $scope.bpmnTags = data;
+            })
+            .error(function (data, status, header, config) {
+            });
+    }
+
     //*******************************************
     //Tags für eine Process-Defintion-ID auslesen
     //*******************************************
@@ -65,11 +79,10 @@ define(['angular', '../modal/postModalController'], function(angular, postmodalC
     //Tag für eine Process-Defintion-ID anlegen
     //*****************************************
     $scope.setTag = function(tag) {
-        $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/"+tag.name))
+        $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/tags/" + $scope.processDefinition.key + "/" + tag.name))
             .success(function () {
-                getTags();
-                getUsers();
-                getPosts();
+
+                $scope.update();
 
                 var status = '# Tag created #';
                 var message = tag.name + ' added to process!';
@@ -85,7 +98,7 @@ define(['angular', '../modal/postModalController'], function(angular, postmodalC
             })
             .error(function (data, status, header, config) {
             });
-    }
+    };
 
     //*****************************************
     //Blogpost anlegen
@@ -93,9 +106,8 @@ define(['angular', '../modal/postModalController'], function(angular, postmodalC
     $scope.setPost = function(post) {
         $http.post(Uri.appUri("plugin://social/:engine/" + $scope.processDefinition.id + "/blog/" +post.caption+ "/" +post.name+ "/false"))
             .success(function () {
-                getPosts();
-                getUsers();
-                getTags();
+
+                $scope.update();
 
                 var status = '# Post created #';
                 var message = post.caption + ' added to process!';
@@ -112,7 +124,7 @@ define(['angular', '../modal/postModalController'], function(angular, postmodalC
             })
             .error(function (data, status, header, config) {
             });
-    }
+    };
 
 
     //DELETE
@@ -137,32 +149,25 @@ define(['angular', '../modal/postModalController'], function(angular, postmodalC
         modalInstance.result.then(function () {
             $scope.update();
         });
-    }
+    };
 
     //************************************************************************************************
     //Funktions Executions
     //************************************************************************************************
 
     $scope.update = function () {
+        getAllBpmnTags();
         getPosts();
         getUsers();
         getTags();
-    }
+    };
 
     getAllTags();
+    getAllBpmnTags();
     getUsers();
     getTags();
     getPosts();
 
-    $scope.tinymceOptions = {
-        resize: false,
-        width: 400,  // I *think* its a number and not '400' string
-        height: 300,
-        plugins: 'print textcolor',
-        toolbar: "undo redo styleselect bold italic print forecolor backcolor"
-
-    };
-
-    }]
+}]
 
 });
